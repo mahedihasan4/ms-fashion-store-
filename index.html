@@ -384,7 +384,7 @@
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
             <div class="space-y-2">
                 <h3 class="text-white text-lg font-bold"><span class="text-brand-pink">MS</span> FASHION</h3>
-                <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ফ্যাশন ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি নিশ্চিত করি।</p>
+                <p class="leading-relaxed">...অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ফ্যাশন ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি নিশ্চিত করি।</p>
             </div>
             <div class="space-y-1">
                 <h4 class="text-white font-bold mb-2">পণ্যসমূহ</h4>
@@ -424,11 +424,18 @@
                 products: [],
 
                 initStore() {
+                    // ডাইনামিক ডাটাবেজ কিলার (কোড আপডেট হলে পুরোনো ব্রাউজার মেমোরি অটো সাফ করবে)
+                    const appVersion = "v2.0_stable";
+                    if(localStorage.getItem('ms_app_version') !== appVersion) {
+                        localStorage.clear();
+                        localStorage.setItem('ms_app_version', appVersion);
+                    }
+
                     const saved = localStorage.getItem('ms_lux_master_db');
                     if (saved) {
                         this.products = JSON.parse(saved);
                     } else {
-                        // ডিফল্ট ডেমো ডেটা মেলা ফিল্ড স্ট্রাকচার অনুযায়ী
+                        // একদম ফ্রেশ ডিফল্ট স্ট্রাকচার লোড
                         this.products = [
                             { 
                                 id: 1, 
