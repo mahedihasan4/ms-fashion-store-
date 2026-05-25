@@ -3,13 +3,13 @@ backend:
   repo: mahedihasan4/MS-Fashion-Store- 
   branch: main 
 
-media_folder: "images/uploads" # আপনার আপলোড করা ছবিগুলো এই ফোল্ডারে জমা হবে
+media_folder: "images/uploads" 
 public_folder: "/images/uploads"
 
 collections:
   - name: "products"
     label: "প্রোডাক্টসমূহ"
-    folder: "data/products" # প্রতিটি প্রোডাক্টের ডেটা এখানে ফাইল হিসেবে জমা হবে
+    folder: "data/products"
     create: true
     slug: "{{slug}}"
     fields:
