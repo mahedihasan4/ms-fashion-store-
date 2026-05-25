@@ -7,157 +7,7 @@
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script function storeApp() {
-    return {
-        currentView: 'user',
-        selectedCategory: 'All',
-        priceFilter: 'all',
-        searchQuery: '',
-        selectedProduct: null,
-        products: [],
-
-        // Active Variant Image states
-        activeColorImage: '',
-        activeColorName: '',
-
-        // Temporary variant states inside admin form
-        tempColorName: '',
-        tempColorLink: '',
-
-        newProd: { id: '', name: '', category: 'Saree', price: '', image: '', description: '', colorList: [] },
-        orderForm: { name: '', phone: '', address: '', qty: 1, payment: 'COD', trxId: '' },
-
-        initStore() {
-            const saved = localStorage.getItem('ms_lux_db');
-            if (saved) {
-                this.products = JSON.parse(saved);
-            } else {
-                // Default Premium Demo Item
-                this.products = [
-                    { 
-                        id: 1, 
-                        name: "প্রিমিয়াম লাক্সারি মাইক্রো জর্জেট স্টোন এম্বেলেশড শাড়ি", 
-                        category: "Saree", 
-                        price: 3450, 
-                        image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80", 
-                        description: "৫ ইঞ্চি দূরত্বে নিখুঁত আকর্ষণীয় স্টোনের লাক্সারি ওয়ার্ক এবং বর্ডারে থিন লেস এমব্রয়ডারি ওয়ার্ক করা ব্লাউজ পিস সহ।",
-                        colorList: [
-                            { cName: "মেরুন (Maroon)", imgLink: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" },
-                            { cName: "কালো (Black)", imgLink: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80" }
-                        ]
-                    }
-                ];
-            }
-        },
-
-        // সিকিউরড অ্যাডমিন সুইচার ভেরিফিকেশন সিস্টেম
-        toggleView() {
-            if (this.currentView === 'user') {
-                // কাস্টমার মোড থেকে অ্যাডমিন মোডে যাওয়ার সময় পাসওয়ার্ড চাইবে
-                const adminPin = prompt("MS Fashion Store সিকিউরিটি পিন কোডটি লিখুন:");
-                
-                // এখানে আপনার পছন্দের পিন সেট করতে পারেন (ডিফল্ট ২০২৬ দেওয়া হলো)
-                if (adminPin === "2026") { 
-                    this.currentView = 'admin';
-                } else if (adminPin !== null) {
-                    alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
-                }
-            } else {
-                // অ্যাডমিন মোড থেকে সহজে স্টোরে ফিরে আসা
-                this.currentView = 'user';
-            }
-        },
-
-        viewProduct(product) {
-            this.selectedProduct = product;
-            this.activeColorImage = product.image;
-            this.activeColorName = product.colorList && product.colorList.length > 0 ? product.colorList[0].cName : 'Default';
-            this.orderForm = { name: '', phone: '', address: '', qty: 1, payment: 'COD', trxId: '' };
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        },
-
-        resetFilters() {
-            this.selectedCategory = 'All';
-            this.searchQuery = '';
-            this.priceFilter = 'all';
-            this.selectedProduct = null;
-        },
-
-        scrollToProducts() {
-            setTimeout(() => {
-                document.getElementById('products-display').scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        },
-
-        filteredProducts() {
-            let items = [...this.products];
-            if (this.searchQuery.trim() !== '') {
-                const q = this.searchQuery.toLowerCase();
-                items = items.filter(p => p.name.toLowerCase().includes(q));
-            }
-            if (this.selectedCategory !== 'All') {
-                items = items.filter(p => p.category === this.selectedCategory);
-            }
-            if (this.priceFilter === 'low') {
-                items.sort((a, b) => a.price - b.price);
-            } else if (this.priceFilter === 'high') {
-                items.sort((a, b) => b.price - a.price);
-            }
-            return items;
-        },
-
-        addColorVariantToList() {
-            if(this.tempColorName && this.tempColorLink) {
-                this.newProd.colorList.push({ cName: this.tempColorName, imgLink: this.tempColorLink });
-                this.tempColorName = '';
-                this.tempColorLink = '';
-            } else {
-                alert('দয়া করে কালারের নাম ও ছবির লিংক দুটিই পূরণ করুন।');
-            }
-        },
-
-        publishNewProduct() {
-            this.newProd.id = Date.now();
-            this.products.unshift({ ...this.newProd });
-            localStorage.setItem('ms_lux_db', JSON.stringify(this.products));
-            this.newProd = { id: '', name: '', category: 'Saree', price: '', image: '', description: '', colorList: [] };
-            this.currentView = 'user';
-            alert('প্রোডাক্টটি সফলভাবে প্রিমিয়াম গ্যালারিতে লাইভ হয়েছে!');
-        },
-
-        deleteProduct(index) {
-            if(confirm('প্রোডাক্টটি ডিলিট করতে চান?')) {
-                this.products.splice(index, 1);
-                localStorage.setItem('ms_lux_db', JSON.stringify(this.products));
-            }
-        },
-
-        submitOrderToGoogleForm() {
-            const formActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
-            const formData = new FormData();
-            
-            formData.append("entry.133960052", this.selectedProduct.name);
-            formData.append("entry.346357419", `নাম: ${this.orderForm.name} | কালার: ${this.activeColorName} | মোবাইল: ${this.orderForm.phone} | ঠিকানা: ${this.orderForm.address}`);
-            formData.append("entry.1542643813", `পরিমাণ: ${this.orderForm.qty} টি | পেমেন্ট পদ্ধতি: ${this.orderForm.payment} | TrxID: ${this.orderForm.trxId || 'N/A'}`);
-
-            fetch(formActionUrl, { method: "POST", mode: "no-cors", body: formData })
-            .then(() => {
-                alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।");
-                this.selectedProduct = null;
-            }).catch(() => {
-                alert("অর্ডার সাবমিট হয়েছে!");
-                this.selectedProduct = null;
-            });
-        },
-
-        sendWhatsAppRedirect() {
-            const payMsg = this.orderForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.orderForm.payment} (TrxID: ${this.orderForm.trxId || 'N/A'})`;
-            const template = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderForm.qty} টি\n💰 সর্বমোট মূল্য: ৳${this.selectedProduct.price * this.orderForm.qty}\n💳 পেমেন্ট: ${payMsg}\n\n👤 নাম: ${this.orderForm.name}\n📱 ফোন: ${this.orderForm.phone}\n📍 ঠিকানা: ${this.orderForm.address}`;
-            window.open(`https://wa.me/8801906109839?text=${encodeURIComponent(template)}`, '_blank');
-        }
-    }
-}
-
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -172,6 +22,7 @@
                 }
             }
         }
+    </script>
     
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -201,7 +52,7 @@
 
             <div class="flex items-center gap-4">
                 <button @click="toggleView()" class="bg-brand-dark text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-md hover:bg-brand-pink transition-all flex items-center gap-2">
-                    <i class="fa-solid" :class="currentView === 'user' ? 'fa-lock-open' : 'fa-globe'"></i> 
+                    <i class="fa-solid" :class="currentView === 'user' ? 'fa-lock' : 'fa-globe'"></i> 
                     <span x-text="currentView === 'user' ? 'অ্যাডমিন প্যানেল' : 'ওয়েবসাইট দেখুন'"></span>
                 </button>
             </div>
@@ -219,54 +70,40 @@
         
         <main x-show="!selectedProduct">
             
-            <section class="relative bg-brand-lightPink overflow-hidden h-[350px] md:h-[500px] flex items-center">
-                <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full">
-                    <div class="z-10 space-y-4 md:space-y-6 text-center md:text-left">
-                        <span class="text-brand-deepPink font-bold uppercase tracking-widest text-sm bg-pink-100 px-3 py-1 rounded-full">New Collection 2026</span>
-                        <h1 class="text-3xl md:text-6xl font-black text-brand-dark leading-tight">অভিজাত ফ্যাশনে <br><span class="text-brand-pink">অনন্য রূপান্তর</span></h1>
-                        <p class="text-gray-600 text-sm md:text-base max-w-md">সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের শাড়ি, থ্রি-পিস এবং টু-পিসের একচেটিয়া সমাহার।</p>
-                        <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3 rounded-md hover:bg-brand-pink smooth-transition text-sm uppercase tracking-wider shadow-lg">এখনই কিনুন</a>
-                    </div>
-                    <div class="hidden md:flex justify-end h-full relative">
-                        <div class="w-80 h-80 rounded-full bg-brand-pink opacity-20 absolute top-10 right-10 blur-2xl"></div>
-                        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" alt="Premium Banner" class="h-full object-cover rounded-bl-[100px] shadow-2xl">
-                    </div>
-                </div>
-            <section class="relative bg-brand-lightPink overflow-hidden h-[350px] md:h-[480px] flex items-center border-b">
-    <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-brand-pink opacity-20 blur-3xl"></div>
-    <div class="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-brand-deepPink opacity-10 blur-3xl"></div>
-    
-    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full relative z-10">
-        <div class="space-y-4 md:space-y-6 text-center md:text-left">
-            <span class="inline-block text-brand-deepPink font-extrabold uppercase tracking-widest text-xs bg-pink-100 px-4 py-1.5 rounded-full">New Collection 2026</span>
-            <h1 class="text-3xl md:text-6xl font-black text-brand-dark leading-tight">
-                অভিজাত ফ্যাশনে <br>
-                <span class="text-brand-pink tracking-wide">অনন্য রূপান্তর</span>
-            </h1>
-            <p class="text-gray-600 text-xs md:text-sm max-w-sm mx-auto md:mx-0 leading-relaxed">
-                সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের শাড়ি, এক্সক্লুসিভ থ্রি-পিস এবং ট্রেন্ডি টু-পিসের একচেটিয়া সমাহার।
-            </p>
-            <div class="pt-2">
-                <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-pink smooth-transition text-xs uppercase tracking-wider shadow-md">
-                    কালেকশন দেখুন &nbsp;<i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-        
-        <div class="hidden md:flex justify-center items-center h-full relative">
-            <div class="w-72 h-72 rounded-3xl border-4 border-dashed border-pink-200 absolute rotate-12"></div>
-            <div class="w-72 h-72 rounded-3xl bg-white shadow-xl flex flex-col justify-center items-center p-6 relative z-10 rotate-3">
-                <h2 class="text-4xl font-black text-brand-dark tracking-widest"><span class="text-brand-pink">MS</span> Store</h2>
-                <div class="w-12 h-1 bg-brand-deepPink my-3 rounded-full"></div>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Premium Fashion Hub</p>
-                <div class="flex gap-3 text-brand-pink text-xs mt-6 opacity-70">
-                    <span>Saree</span> • <span>Three Piece</span> • <span>Two Piece</span>
-                </div>
-            </div>
-        </div>
-    </div>
-            </section>
+            <section class="relative bg-brand-lightPink overflow-hidden h-[350px] md:h-[450px] flex items-center border-b">
+                <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-brand-pink opacity-20 blur-3xl"></div>
+                <div class="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-brand-deepPink opacity-10 blur-3xl"></div>
                 
+                <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full relative z-10">
+                    <div class="space-y-4 md:space-y-6 text-center md:text-left">
+                        <span class="inline-block text-brand-deepPink font-extrabold uppercase tracking-widest text-xs bg-pink-100 px-4 py-1.5 rounded-full">New Collection 2026</span>
+                        <h1 class="text-3xl md:text-6xl font-black text-brand-dark leading-tight">
+                            অভিজাত ফ্যাশনে <br>
+                            <span class="text-brand-pink tracking-wide">অনন্য রূপান্তর</span>
+                        </h1>
+                        <p class="text-gray-600 text-xs md:text-sm max-w-sm mx-auto md:mx-0 leading-relaxed">
+                            সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের শাড়ি, এক্সক্লুসিভ থ্রি-পিস এবং ট্রেন্ডি টু-পিসের একচেটিয়া সমাহার।
+                        </p>
+                        <div class="pt-2">
+                            <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-pink smooth-transition text-xs uppercase tracking-wider shadow-md">
+                                কালেকশন দেখুন &nbsp;<i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden md:flex justify-center items-center h-full relative">
+                        <div class="w-72 h-72 rounded-3xl border-4 border-dashed border-pink-200 absolute rotate-12"></div>
+                        <div class="w-72 h-72 rounded-3xl bg-white shadow-xl flex flex-col justify-center items-center p-6 relative z-10 rotate-3">
+                            <h2 class="text-4xl font-black text-brand-dark tracking-widest"><span class="text-brand-pink">MS</span> Store</h2>
+                            <div class="w-12 h-1 bg-brand-deepPink my-3 rounded-full"></div>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Premium Fashion Hub</p>
+                            <div class="flex gap-3 text-brand-pink text-xs mt-6 opacity-70">
+                                <span>Saree</span> • <span>Three Piece</span> • <span>Two Piece</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section class="py-12 bg-white">
                 <div class="container mx-auto px-4">
@@ -279,7 +116,7 @@
                             <div @click="selectedCategory = cat; scrollToProducts()" class="cursor-pointer group relative overflow-hidden rounded-xl bg-gray-900 text-white h-24 md:h-40 flex items-center justify-center smooth-transition shadow-md">
                                 <div class="absolute inset-0 bg-brand-dark opacity-40 group-hover:opacity-60 smooth-transition"></div>
                                 <div class="z-10 text-center">
-                                    <h3 class="font-bold text-sm md:text-2xl tracking-wide uppercase" x-text="cat === 'Saree' ? 'শাড়ি' : (cat === 'Three Piece' ? 'ث্রি পিস' : 'টু পিস')"></h3>
+                                    <h3 class="font-bold text-sm md:text-2xl tracking-wide uppercase" x-text="cat === 'Saree' ? 'শাড়ি' : (cat === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></h3>
                                     <span class="text-[10px] md:text-xs text-pink-300 opacity-0 group-hover:opacity-100 smooth-transition block mt-1">কালেকশন দেখুন &rarr;</span>
                                 </div>
                             </div>
@@ -322,8 +159,8 @@
                                         <h3 class="font-bold text-gray-900 text-sm md:text-base mt-1 line-clamp-2 cursor-pointer hover:text-brand-pink" @click="viewProduct(product)" x-text="product.name"></h3>
                                     </div>
                                     <div class="mt-4">
-                                        <span class="text-brand-deepPink font-extrabold text-base md:text-xl">৳ <span x-text="product.price"></span></span>
-                                        <button @click="viewProduct(product)" class="w-full mt-3 bg-transparent border-2 border-brand-dark text-brand-dark font-bold text-xs md:text-sm py-2 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-300">
+                                        <div class="mb-3"><span class="text-brand-deepPink font-extrabold text-base md:text-xl">৳ <span x-text="product.price"></span></span></div>
+                                        <button @click="viewProduct(product)" class="w-full bg-transparent border-2 border-brand-dark text-brand-dark font-bold text-xs md:text-sm py-2 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-300">
                                             অর্ডার করুন
                                         </button>
                                     </div>
@@ -391,7 +228,7 @@
 
                     <div class="flex flex-col justify-between">
                         <div>
-                            <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase" x-text="selectedProduct.category"></span>
+                            <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase" x-text="selectedProduct.category === 'Saree' ? 'শাড়ি' : (selectedProduct.category === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></span>
                             <h1 class="text-2xl md:text-4xl font-extrabold text-brand-dark mt-3" x-text="selectedProduct.name"></h1>
                             <p class="text-3xl font-black text-brand-deepPink mt-2">৳ <span x-text="selectedProduct.price"></span></p>
 
@@ -404,8 +241,8 @@
                                 <h4 class="font-bold text-xs text-gray-700 mb-2">উপলব্ধ কালার ভ্যারিয়েন্ট (ক্লিক করুন):</h4>
                                 <div class="flex flex-wrap gap-2">
                                     <template x-for="c in selectedProduct.colorList">
-                                        <button @click="activeColorImage = c.imgLink; activeColorName = c.cName" class="px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" :class="activeColorName === c.cName ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'border-gray-200 bg-white'">
-                                            <span class="w-3 h-3 rounded-full border bg-gray-400"></span>
+                                        <button type="button" @click="activeColorImage = c.imgLink; activeColorName = c.cName" class="px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" :class="activeColorName === c.cName ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'border-gray-200 bg-white'">
+                                            <span class="w-3 h-3 rounded-full border bg-pink-300"></span>
                                             <span x-text="c.cName"></span>
                                         </button>
                                     </template>
@@ -441,7 +278,7 @@
                                         </label>
                                         <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center" :class="orderForm.payment === 'bKash' ? 'border-pink-500 bg-pink-100 text-pink-700' : 'bg-white text-gray-600'">
                                             <input type="radio" value="bKash" x-model="orderForm.payment" class="hidden">
-                                            <span class="font-black text-xs mb-1">বিকাশ</span>
+                                            <span class="font-black text-xs mb-1">বিকার্শ</span>
                                             <span class="text-[9px]">পার্সোনাল</span>
                                         </label>
                                         <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center" :class="orderForm.payment === 'Nagad' ? 'border-orange-500 bg-orange-100 text-orange-700' : 'bg-white text-gray-600'">
@@ -511,10 +348,10 @@
                 <div class="border p-3 rounded-xl bg-gray-50 space-y-2">
                     <label class="block text-xs font-bold text-gray-700">কালার ভ্যারিয়েন্ট অ্যাড করুন (ঐচ্ছিক):</label>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" x-model="tempColorName" placeholder="কালারের নাম (যেমন: কালো)" class="border rounded-lg p-2 text-[11px] bg-white">
-                        <input type="url" x-model="tempColorLink" placeholder="ওই কালারের ছবির লিংক" class="border rounded-lg p-2 text-[11px] bg-white">
+                        <input type="text" x-model="tempColorName" placeholder="কালারের নাম (যেমন: কালো)" class="border rounded-lg p-2 text-[11px] bg-white text-xs focus:outline-none">
+                        <input type="url" x-model="tempColorLink" placeholder="ওই কালারের ছবির লিংক" class="border rounded-lg p-2 text-[11px] bg-white text-xs focus:outline-none">
                     </div>
-                    <button type="button" @click="addColorVariantToList()" class="bg-gray-200 text-gray-800 text-[10px] font-bold px-3 py-1 rounded-lg hover:bg-brand-pink hover:text-white transition-all">+ কালার ভ্যারিয়েন্ট যুক্ত করুন</button>
+                    <button type="button" @click="addColorVariantToList()" class="bg-gray-200 text-gray-800 text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-brand-pink hover:text-white transition-all">+ কালার ভ্যারিয়েন্ট যুক্ত করুন</button>
                     
                     <div class="flex flex-wrap gap-1 pt-1" x-show="newProd.colorList.length > 0">
                         <template x-for="(c, i) in newProd.colorList">
@@ -556,7 +393,7 @@
         <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs">
             <div class="space-y-3">
                 <h3 class="text-white text-xl font-bold"><span class="text-brand-pink">MS</span> FASHION</h3>
-                <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ফ্যাশন ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
+                <p class="leading-relaxed">...অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ফ্যাশন ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
             </div>
             <div class="space-y-2">
                 <h4 class="text-white font-bold text-sm uppercase">পণ্যসমূহ</h4>
@@ -585,11 +422,9 @@
                 selectedProduct: null,
                 products: [],
 
-                // Active Variant Image states
                 activeColorImage: '',
                 activeColorName: '',
 
-                // Temporary variant states inside admin form
                 tempColorName: '',
                 tempColorLink: '',
 
@@ -601,7 +436,7 @@
                     if (saved) {
                         this.products = JSON.parse(saved);
                     } else {
-                        // Default Premium Demo Item
+                        // Default Premium Setup
                         this.products = [
                             { 
                                 id: 1, 
@@ -619,8 +454,18 @@
                     }
                 },
 
+                // Secure Pin verification switcher 
                 toggleView() {
-                    this.currentView = this.currentView === 'user' ? 'admin' : 'user';
+                    if (this.currentView === 'user') {
+                        const adminPin = prompt("MS Fashion Store সিকিউরিটি পিন কোডটি লিখুন:");
+                        if (adminPin === "2026") { 
+                            this.currentView = 'admin';
+                        } else if (adminPin !== null) {
+                            alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
+                        }
+                    } else {
+                        this.currentView = 'user';
+                    }
                 },
 
                 viewProduct(product) {
@@ -688,30 +533,4 @@
                 },
 
                 submitOrderToGoogleForm() {
-                    const formActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
-                    const formData = new FormData();
-                    
-                    formData.append("entry.133960052", this.selectedProduct.name);
-                    formData.append("entry.346357419", `নাম: ${this.orderForm.name} | কালার: ${this.activeColorName} | মোবাইল: ${this.orderForm.phone} | ঠিকানা: ${this.orderForm.address}`);
-                    formData.append("entry.1542643813", `পরিমাণ: ${this.orderForm.qty} টি | পেমেন্ট পদ্ধতি: ${this.orderForm.payment} | TrxID: ${this.orderForm.trxId || 'N/A'}`);
-
-                    fetch(formActionUrl, { method: "POST", mode: "no-cors", body: formData })
-                    .then(() => {
-                        alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।");
-                        this.selectedProduct = null;
-                    }).catch(() => {
-                        alert("অর্ডার সাবমিট হয়েছে!");
-                        this.selectedProduct = null;
-                    });
-                },
-
-                sendWhatsAppRedirect() {
-                    const payMsg = this.orderForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.orderForm.payment} (TrxID: ${this.orderForm.trxId || 'N/A'})`;
-                    const template = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderForm.qty} টি\n💰 সর্বমোট মূল্য: ৳${this.selectedProduct.price * this.orderForm.qty}\n💳 পেমেন্ট: ${payMsg}\n\n👤 নাম: ${this.orderForm.name}\n📱 ফোন: ${this.orderForm.phone}\n📍 ঠিকানা: ${this.orderForm.address}`;
-                    window.open(`https://wa.me/8801906109839?text=${encodeURIComponent(template)}`, '_blank');
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+                    const formActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRiv
