@@ -1,7 +1,7 @@
 backend:
   name: github
-  repo: mahedihasan4/MS-Fashion-Store- # 👈 এখানে আপনার গিটহাব ইউজারনেম/রিপোজিটরি নাম দিন (যেমন: mahedi/ms-fashion-store)
-  branch: main # বা master হলে master লিখুন
+  repo: mahedihasan4/MS-Fashion-Store- 
+  branch: main 
 
 media_folder: "images/uploads" # আপনার আপলোড করা ছবিগুলো এই ফোল্ডারে জমা হবে
 public_folder: "/images/uploads"
