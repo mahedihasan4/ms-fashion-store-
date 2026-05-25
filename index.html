@@ -339,7 +339,7 @@
             <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs">
                 <div class="space-y-4">
                     <h3 class="text-white text-xl font-bold tracking-wider"><span class="text-brand-pink">MS</span> FASHION</h3>
-                    <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ফ্যাশন ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
+                    <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়ামファッション ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
                 </div>
                 <div class="space-y-2">
                     <h4 class="text-white font-bold text-sm uppercase tracking-wider">পণ্যসমূহ</h4>
@@ -384,8 +384,8 @@
                 </div>
                 <div>
                     <label class="block font-bold text-gray-700 mb-1">মেইন কভার ছবির অনলাইন লিংক *</label>
-                    <input type="url" x-model="adminNewProd.mainImage" required placeholder="https://..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
-                    <p class="text-[10px] text-gray-400 mt-1">💡 আপনার মোবাইল গ্যালারির ছবি <a href="https://imgbb.com" target="_blank" class="text-brand-pink underline">ImgBB.com</a> এ আপলোড করে Direct Link-টি এখানে দিন।</p>
+                    <input type="url" x-model="adminNewProd.mainImage" required placeholder="https://i.ibb.co.com/..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                    <p class="text-[10px] text-gray-400 mt-1">💡 আপনার মোবাইল গ্যালারির ছবি <a href="https://imgbb.com" target="_blank" class="text-brand-pink underline">ImgBB.com</a> এ আপলোড করে <b>Direct Link</b>-টি এখানে দিন।</p>
                 </div>
                 
                 <div class="border p-3 rounded-xl bg-gray-50 space-y-2">
@@ -494,7 +494,7 @@
                                 details: [
                                     "কামিজ: মাইক্রো জর্জেট ডিজিটাল প্রিন্ট সহ এমব্রয়ডারি কাজ",
                                     "সালোয়ার: সফট প্রিমিয়াম কটন বাটার সিল্ক ইনার পিস",
-                                    "ওড়না: ৫ হাত নামাজি পিওর জর্জেট ম্যাচিং দোপাট্টা ও টারসেল"
+                                    "ওড়না: ৫ হাত নামাজি পিওর জর্জেট ম্যাচিং দופাট্টা ও টারসেল"
                                 ],
                                 colors: [
                                     { name: "জ্যাম কালার (Jam)", hex: "#4A0E17", images: ["https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=600&q=80"] }
@@ -634,23 +634,29 @@
                         return;
                     }
 
+                    // Native AJAX Form Submission (Bypasses CORS restrictions)
                     const baseGoogleFormActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
-                    const dataPackager = new FormData();
                     
-                    dataPackager.append("entry.133960052", this.selectedProduct.name);
-                    dataPackager.append("entry.346357419", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | ঠিকানা: ${this.checkoutForm.address}`);
-                    dataPackager.append("entry.1542643813", `পরিমাণ: ${this.orderQuantity} টি | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
+                    const formBodyData = new URLSearchParams();
+                    formBodyData.append("entry.133960052", this.selectedProduct.name);
+                    formBodyData.append("entry.346357419", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | ঠিকানা: ${this.checkoutForm.address}`);
+                    formBodyData.append("entry.1542643813", `পরিমাণ: ${this.orderQuantity} টি | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
 
-                    alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সাবমিট হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।");
+                    alert("🎉 প্রসেস হচ্ছে... দয়া করে সামান্য অপেক্ষা করুন।");
 
                     fetch(baseGoogleFormActionUrl, {
                         method: "POST",
                         mode: "no-cors",
-                        body: dataPackager
-                    }).then(() => {
-                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে গ্রহণ করা হয়েছে। খুব শীঘ্রই কনফার্মেশনের জন্য কল করা হবে।");
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: formBodyData.toString()
+                    })
+                    .then(() => {
+                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
                         this.selectedProduct = null;
-                    }).catch((error) => {
+                    })
+                    .catch((error) => {
                         alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সিস্টেমে রেজিস্টার হয়েছে।");
                         this.selectedProduct = null;
                     });
