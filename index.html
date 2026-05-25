@@ -7,7 +7,7 @@
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    function storeApp() {
+    <script function storeApp() {
     return {
         currentView: 'user',
         selectedCategory: 'All',
@@ -172,7 +172,6 @@
                 }
             }
         }
-    </script>
     
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -233,7 +232,41 @@
                         <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" alt="Premium Banner" class="h-full object-cover rounded-bl-[100px] shadow-2xl">
                     </div>
                 </div>
+            <section class="relative bg-brand-lightPink overflow-hidden h-[350px] md:h-[480px] flex items-center border-b">
+    <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-brand-pink opacity-20 blur-3xl"></div>
+    <div class="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-brand-deepPink opacity-10 blur-3xl"></div>
+    
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full relative z-10">
+        <div class="space-y-4 md:space-y-6 text-center md:text-left">
+            <span class="inline-block text-brand-deepPink font-extrabold uppercase tracking-widest text-xs bg-pink-100 px-4 py-1.5 rounded-full">New Collection 2026</span>
+            <h1 class="text-3xl md:text-6xl font-black text-brand-dark leading-tight">
+                অভিজাত ফ্যাশনে <br>
+                <span class="text-brand-pink tracking-wide">অনন্য রূপান্তর</span>
+            </h1>
+            <p class="text-gray-600 text-xs md:text-sm max-w-sm mx-auto md:mx-0 leading-relaxed">
+                সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের শাড়ি, এক্সক্লুসিভ থ্রি-পিস এবং ট্রেন্ডি টু-পিসের একচেটিয়া সমাহার।
+            </p>
+            <div class="pt-2">
+                <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-pink smooth-transition text-xs uppercase tracking-wider shadow-md">
+                    কালেকশন দেখুন &nbsp;<i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <div class="hidden md:flex justify-center items-center h-full relative">
+            <div class="w-72 h-72 rounded-3xl border-4 border-dashed border-pink-200 absolute rotate-12"></div>
+            <div class="w-72 h-72 rounded-3xl bg-white shadow-xl flex flex-col justify-center items-center p-6 relative z-10 rotate-3">
+                <h2 class="text-4xl font-black text-brand-dark tracking-widest"><span class="text-brand-pink">MS</span> Store</h2>
+                <div class="w-12 h-1 bg-brand-deepPink my-3 rounded-full"></div>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Premium Fashion Hub</p>
+                <div class="flex gap-3 text-brand-pink text-xs mt-6 opacity-70">
+                    <span>Saree</span> • <span>Three Piece</span> • <span>Two Piece</span>
+                </div>
+            </div>
+        </div>
+    </div>
             </section>
+                
 
             <section class="py-12 bg-white">
                 <div class="container mx-auto px-4">
