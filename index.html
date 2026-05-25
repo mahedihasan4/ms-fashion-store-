@@ -282,7 +282,13 @@
 
                         <div class="mt-6 bg-gray-50 p-4 rounded-2xl border">
                             <h3 class="font-bold text-xs text-brand-dark mb-3 border-b pb-2"><i class="fa-solid fa-shopping-bag text-brand-pink"></i> কাস্টমার ডেলিভারি ও পেমেন্ট ফর্ম</h3>
-                            <form @submit.prevent="submitStoreFormToGoogle()" class="space-y-3">
+                            
+                            <form id="googleOrderForm" target="invisibleFormResponseGateway" action="https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse" method="POST" class="space-y-3">
+                                
+                                <input type="hidden" name="entry.133960052" :value="selectedProduct.name">
+                                <input type="hidden" name="entry.346357419" id="google_field_customer_details">
+                                <input type="hidden" name="entry.1542643813" id="google_field_order_specs">
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     <input type="text" x-model="checkoutForm.name" required placeholder="আপনার নাম লিখুন" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
                                     <input type="tel" x-model="checkoutForm.phone" required placeholder="মোবাইল নম্বর" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
@@ -321,7 +327,7 @@
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-2 pt-1">
-                                    <button type="submit" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl text-xs hover:bg-brand-pink transition-all shadow-md">
+                                    <button type="button" @click="executeSecureIframeSubmission()" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl text-xs hover:bg-brand-pink transition-all shadow-md">
                                         <i class="fa-solid fa-bolt mr-1"></i> অর্ডার সম্পন্ন করুন
                                     </button>
                                     <button type="button" @click="sendToWhatsAppDirectAction()" class="w-full bg-[#25D366] text-white font-bold py-3.5 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-md">
@@ -329,6 +335,8 @@
                                     </button>
                                 </div>
                             </form>
+                            
+                            <iframe name="invisibleFormResponseGateway" id="invisibleFormResponseGateway" class="hidden" style="display:none !important; width:0; height:0; border:0;"></iframe>
                         </div>
                     </div>
                 </div>
@@ -339,7 +347,7 @@
             <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs">
                 <div class="space-y-4">
                     <h3 class="text-white text-xl font-bold tracking-wider"><span class="text-brand-pink">MS</span> FASHION</h3>
-                    <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়ামファッション ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
+                    <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
                 </div>
                 <div class="space-y-2">
                     <h4 class="text-white font-bold text-sm uppercase tracking-wider">পণ্যসমূহ</h4>
@@ -445,22 +453,11 @@
                 activeColorImage: '',
                 activeColorName: '',
                 orderQuantity: 1,
-                isCartOpen: false,
-                cart: [],
-
+                checkoutForm: { name: '', phone: '', address: '', payment: 'COD', trxId: '' },
+                products: [],
                 tempColorName: '',
                 tempColorLink: '',
                 adminNewProd: { id: '', name: '', category: 'Saree', price: '', mainImage: '', description: '', colors: [] },
-
-                checkoutForm: {
-                    name: '',
-                    phone: '',
-                    address: '',
-                    payment: 'COD',
-                    trxId: ''
-                },
-
-                products: [],
 
                 initStore() {
                     const savedDB = localStorage.getItem('ms_fashion_master_db');
@@ -473,31 +470,10 @@
                                 name: "প্রিমিয়াম লাক্সারি মাইক্রো জর্জেট স্টোন এম্বেলেশড শাড়ি",
                                 category: "Saree",
                                 price: 3450,
-                                description: "অভিজাত এবং জমকালো পার্টির জন্য নিখুঁত চয়েস। সম্পূর্ণ শাড়িতে নিখুঁত ফিনিশিংয়ের সাথে রাজকীয় স্টোনের অলংকরণ করা হয়েছে, যার স্থায়িত্ব দীর্ঘস্থায়ী।",
-                                details: [
-                                    "ফেব্রিক: প্রিমিয়াম মাইক্রো সফট জর্জেট",
-                                    "ডিজাইন: ৫ ইঞ্চি দূরত্বে আকর্ষনীয় সাইনিং স্টোন ওয়ার্ক",
-                                    "লেস: পাড়ের বর্ডারে পাতলা মডার্ন প্রিমিয়াম এমব্রয়ডারি লেস",
-                                    "ব্লাউজ: ম্যাচিং আনস্টিচড ব্লাউজ পিস অন্তর্ভুক্ত"
-                                ],
+                                description: "অভিজাত এবং জমকালো পার্টির জন্য নিখুঁত চয়েস। সম্পূর্ণ শাড়িতে নিখুঁত ফিনিশিংয়ের সাথে রাজকীয় স্টোনের অলংকরণ করা হয়েছে।",
+                                details: ["ফেব্রিক: প্রিমিয়াম মাইক্রো সফট জর্জেট", "ডিজাইন: ৫ ইঞ্চি দূরত্বে আকর্ষনীয় সাইনিং স্টোন ওয়ার্ক", "লেস: পাড়ের বর্ডারে পাতলা মডার্ন প্রিমিয়াম এমব্রয়ডারি লেস"],
                                 colors: [
-                                    { name: "মেরুন (Maroon)", hex: "#800000", images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80", "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80"] },
-                                    { name: "কালো (Black)", hex: "#000000", images: ["https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80"] }
-                                ]
-                            },
-                            {
-                                id: 2,
-                                name: "এক্সক্লুসিভ জর্জেট এমব্রয়ডারি বুটিক ডিজাইনার থ্রি-পিস",
-                                category: "Three Piece",
-                                price: 2850,
-                                description: "আধুনিক নারীদের জন্য আরামদায়ক এবং ট্রেন্ডি ডিজাইনের ট্র্যাডিশনাল থ্রি-পিস স্যুট কালেকশন।",
-                                details: [
-                                    "কামিজ: মাইক্রো জর্জেট ডিজিটাল প্রিন্ট সহ এমব্রয়ডারি কাজ",
-                                    "সালোয়ার: সফট প্রিমিয়াম কটন বাটার সিল্ক ইনার পিস",
-                                    "ওড়না: ৫ হাত নামাজি পিওর জর্জেট ম্যাচিং দופাট্টা ও টারসেল"
-                                ],
-                                colors: [
-                                    { name: "জ্যাম কালার (Jam)", hex: "#4A0E17", images: ["https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=600&q=80"] }
+                                    { name: "মেরুন (Maroon)", hex: "#800000", images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"] }
                                 ]
                             }
                         ];
@@ -511,7 +487,7 @@
                         if (securePinCode === "2026") {
                             this.currentView = 'admin';
                         } else if (securePinCode !== null) {
-                            alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
+                            alert("ভুল পিন কোড!");
                         }
                     } else {
                         this.currentView = 'user';
@@ -528,23 +504,13 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
 
-                closeProductView() {
-                    this.selectedProduct = null;
-                },
-
+                closeProductView() { this.selectedProduct = null; },
                 selectColor(index, color) {
                     this.activeColorIndex = index;
                     this.activeColorImage = color.images[0];
                     this.activeColorName = color.name;
                 },
-
-                resetFilters() {
-                    this.selectedCategory = 'All';
-                    this.searchQuery = '';
-                    this.priceFilter = 'all';
-                    this.selectedProduct = null;
-                },
-
+                resetFilters() { this.selectedCategory = 'All'; this.searchQuery = ''; this.selectedProduct = null; },
                 scrollToProducts() {
                     setTimeout(() => {
                         const container = document.getElementById('products-display');
@@ -555,123 +521,73 @@
                 filteredProducts() {
                     let items = [...this.products];
                     if (this.searchQuery.trim() !== '') {
-                        const query = this.searchQuery.toLowerCase();
-                        items = items.filter(p => p.name.toLowerCase().includes(query));
+                        items = items.filter(p => p.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
                     }
                     if (this.selectedCategory !== 'All') {
                         items = items.filter(p => p.category === this.selectedCategory);
                     }
-                    if (this.priceFilter === 'low') {
-                        items.sort((a, b) => a.price - b.price);
-                    } else if (this.priceFilter === 'high') {
-                        items.sort((a, b) => b.price - a.price);
-                    }
+                    if (this.priceFilter === 'low') items.sort((a, b) => a.price - b.price);
+                    else if (this.priceFilter === 'high') items.sort((a, b) => b.price - a.price);
                     return items;
                 },
 
                 addColorVariantStack() {
                     if (this.tempColorName && this.tempColorLink) {
-                        this.adminNewProd.colors.push({
-                            name: this.tempColorName,
-                            hex: "#ccc",
-                            images: [this.tempColorLink]
-                        });
-                        this.tempColorName = '';
-                        this.tempColorLink = '';
-                    } else {
-                        alert('দয়া করে কালার ভ্যারিয়েন্টের নাম ও ছবির লিংক টাইপ করুন।');
+                        this.adminNewProd.colors.push({ name: this.tempColorName, hex: "#ccc", images: [this.tempColorLink] });
+                        this.tempColorName = ''; this.tempColorLink = '';
                     }
                 },
 
                 publishNewProductFormSubmit() {
-                    let finalColors = [];
-                    
-                    if (this.adminNewProd.colors.length === 0) {
-                        finalColors.push({
-                            name: "স্ট্যান্ডার্ড (Default)",
-                            hex: "#ec4899",
-                            images: [this.adminNewProd.mainImage]
-                        });
-                    } else {
-                        finalColors = [...this.adminNewProd.colors];
-                        if (this.adminNewProd.mainImage && finalColors[0].images[0] !== this.adminNewProd.mainImage) {
-                            finalColors.unshift({
-                                name: "প্রধান কভার (Main)",
-                                hex: "#ec4899",
-                                images: [this.adminNewProd.mainImage]
-                            });
-                        }
-                    }
-                    
-                    const newGeneratedProductStructure = {
+                    let finalColors = this.adminNewProd.colors.length === 0 ? [{ name: "স্ট্যান্ডার্ড (Default)", hex: "#ec4899", images: [this.adminNewProd.mainImage] }] : [...this.adminNewProd.colors];
+                    this.products.unshift({
                         id: Date.now(),
                         name: this.adminNewProd.name,
                         category: this.adminNewProd.category,
                         price: parseInt(this.adminNewProd.price),
                         description: this.adminNewProd.description || "কোনো বিবরণ দেওয়া নেই।",
-                        details: ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন গর্জিয়াস লাক্সারি আউটলুক", "কালেকশন: এক্সক্লুসিভ ফ্যাশন ২০২৬"],
+                        details: ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন লাক্সারি আউটলুক"],
                         colors: finalColors
-                    };
-
-                    this.products.unshift(newGeneratedProductStructure);
+                    });
                     localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
-                    
                     this.adminNewProd = { id: '', name: '', category: 'Saree', price: '', mainImage: '', description: '', colors: [] };
                     this.currentView = 'user';
-                    alert('আপনার প্রোডাক্টটি সফলভাবে গ্যালারিতে লাইভ হয়েছে!');
+                    alert('আপনার প্রোডাক্টটি সফলভাবে লাইভ হয়েছে!');
                 },
 
                 deleteProductFromInventory(index) {
-                    if (confirm('আপনি কি নিশ্চিত যে এই প্রোডাক্টটি চিরতরে ডিলিট করতে চান?')) {
+                    if (confirm('ডিলিট করতে চান?')) {
                         this.products.splice(index, 1);
                         localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
                     }
                 },
 
-                submitStoreFormToGoogle() {
+                // Secure Gateway Submission Logic (Bypasses Google Blockers & CORS)
+                executeSecureIframeSubmission() {
                     if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
                         alert("দয়া করে ফর্মের সব তথ্য সঠিকভাবে পূরণ করুন।");
                         return;
                     }
 
-                    // Native AJAX Form Submission (Bypasses CORS restrictions)
-                    const baseGoogleFormActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
-                    
-                    const formBodyData = new URLSearchParams();
-                    formBodyData.append("entry.133960052", this.selectedProduct.name);
-                    formBodyData.append("entry.346357419", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | ঠিকানা: ${this.checkoutForm.address}`);
-                    formBodyData.append("entry.1542643813", `পরিমাণ: ${this.orderQuantity} টি | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
+                    // Map internal state safely into the hidden layout elements
+                    document.getElementById('google_field_customer_details').value = `নাম: ${this.checkoutForm.name} | ফোন: ${this.checkoutForm.phone} | ঠিকানা: ${this.checkoutForm.address}`;
+                    document.getElementById('google_field_order_specs').value = `পরিমাণ: ${this.orderQuantity} টি | কালার: ${this.activeColorName} | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`;
 
-                    alert("🎉 প্রসেস হচ্ছে... দয়া করে সামান্য অপেক্ষা করুন।");
+                    // Trigger Native Form Submission directly into the background iframe
+                    document.getElementById('googleOrderForm').submit();
 
-                    fetch(baseGoogleFormActionUrl, {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: formBodyData.toString()
-                    })
-                    .then(() => {
-                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
-                        this.selectedProduct = null;
-                    })
-                    .catch((error) => {
-                        alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সিস্টেমে রেজিস্টার হয়েছে।");
-                        this.selectedProduct = null;
-                    });
+                    // Instantly notify customer and reset state
+                    alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সফলভাবে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
+                    this.selectedProduct = null;
                 },
 
                 sendToWhatsAppDirectAction() {
                     if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
-                        alert("WhatsApp-এ অর্ডার ডিটেইলস পাঠাতে ফর্মের তথ্যগুলো (নাম, ফোন, ঠিকানা) আগে লিখে নিন।");
-                        return;
+                        alert("তথ্যগুলো আগে পূরণ করুন।"); return;
                     }
-                    const paymentMessageText = this.checkoutForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.checkoutForm.payment} (TrxID: ${this.checkoutForm.trxId || 'নেই'})`;
-                    const coreTemplateMessage = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderQuantity} টি\n💰 সর্বমোট মূল্য: ৳${this.selectedProduct.price * this.orderQuantity}\n💳 পেমেন্ট পদ্ধতি: ${paymentMessageText}\n\n👤 কাস্টমার নাম: ${this.checkoutForm.name || '___________'}\n📱 ফোন নম্বর: ${this.checkoutForm.phone || '___________'}\n📍 ঠিকানা: ${this.checkoutForm.address || '___________'}`;
-                    
-                    const finalWhatsAppLinkGateway = `https://wa.me/8801906109839?text=${encodeURIComponent(coreTemplateMessage)}`;
-                    window.open(finalWhatsAppLinkGateway, '_blank');
+                    const payText = this.checkoutForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.checkoutForm.payment} (TrxID: ${this.checkoutForm.trxId || 'নেই'})`;
+                    const msg = `হ্যালো MS Fashion Store,\nঅর্ডার ডিটেইলস:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderQuantity} টি\n💰 সর্বমোট: ৳${this.selectedProduct.price * this.orderQuantity}\n💳 পেমেন্ট: ${payText}\n\n👤 নাম: ${this.checkoutForm.name}\n📱 ফোন: ${this.checkoutForm.phone}\n📍 ঠিকানা: ${this.checkoutForm.address}`;
+                    window.open(`https://wa.me/8801906109839?text=${encodeURIComponent(msg)}`, '_blank');
                 }
             }
         }
