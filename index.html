@@ -7,7 +7,157 @@
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    function storeApp() {
+    return {
+        currentView: 'user',
+        selectedCategory: 'All',
+        priceFilter: 'all',
+        searchQuery: '',
+        selectedProduct: null,
+        products: [],
+
+        // Active Variant Image states
+        activeColorImage: '',
+        activeColorName: '',
+
+        // Temporary variant states inside admin form
+        tempColorName: '',
+        tempColorLink: '',
+
+        newProd: { id: '', name: '', category: 'Saree', price: '', image: '', description: '', colorList: [] },
+        orderForm: { name: '', phone: '', address: '', qty: 1, payment: 'COD', trxId: '' },
+
+        initStore() {
+            const saved = localStorage.getItem('ms_lux_db');
+            if (saved) {
+                this.products = JSON.parse(saved);
+            } else {
+                // Default Premium Demo Item
+                this.products = [
+                    { 
+                        id: 1, 
+                        name: "প্রিমিয়াম লাক্সারি মাইক্রো জর্জেট স্টোন এম্বেলেশড শাড়ি", 
+                        category: "Saree", 
+                        price: 3450, 
+                        image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80", 
+                        description: "৫ ইঞ্চি দূরত্বে নিখুঁত আকর্ষণীয় স্টোনের লাক্সারি ওয়ার্ক এবং বর্ডারে থিন লেস এমব্রয়ডারি ওয়ার্ক করা ব্লাউজ পিস সহ।",
+                        colorList: [
+                            { cName: "মেরুন (Maroon)", imgLink: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" },
+                            { cName: "কালো (Black)", imgLink: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80" }
+                        ]
+                    }
+                ];
+            }
+        },
+
+        // সিকিউরড অ্যাডমিন সুইচার ভেরিফিকেশন সিস্টেম
+        toggleView() {
+            if (this.currentView === 'user') {
+                // কাস্টমার মোড থেকে অ্যাডমিন মোডে যাওয়ার সময় পাসওয়ার্ড চাইবে
+                const adminPin = prompt("MS Fashion Store সিকিউরিটি পিন কোডটি লিখুন:");
+                
+                // এখানে আপনার পছন্দের পিন সেট করতে পারেন (ডিফল্ট ২০২৬ দেওয়া হলো)
+                if (adminPin === "2026") { 
+                    this.currentView = 'admin';
+                } else if (adminPin !== null) {
+                    alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
+                }
+            } else {
+                // অ্যাডমিন মোড থেকে সহজে স্টোরে ফিরে আসা
+                this.currentView = 'user';
+            }
+        },
+
+        viewProduct(product) {
+            this.selectedProduct = product;
+            this.activeColorImage = product.image;
+            this.activeColorName = product.colorList && product.colorList.length > 0 ? product.colorList[0].cName : 'Default';
+            this.orderForm = { name: '', phone: '', address: '', qty: 1, payment: 'COD', trxId: '' };
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+
+        resetFilters() {
+            this.selectedCategory = 'All';
+            this.searchQuery = '';
+            this.priceFilter = 'all';
+            this.selectedProduct = null;
+        },
+
+        scrollToProducts() {
+            setTimeout(() => {
+                document.getElementById('products-display').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        },
+
+        filteredProducts() {
+            let items = [...this.products];
+            if (this.searchQuery.trim() !== '') {
+                const q = this.searchQuery.toLowerCase();
+                items = items.filter(p => p.name.toLowerCase().includes(q));
+            }
+            if (this.selectedCategory !== 'All') {
+                items = items.filter(p => p.category === this.selectedCategory);
+            }
+            if (this.priceFilter === 'low') {
+                items.sort((a, b) => a.price - b.price);
+            } else if (this.priceFilter === 'high') {
+                items.sort((a, b) => b.price - a.price);
+            }
+            return items;
+        },
+
+        addColorVariantToList() {
+            if(this.tempColorName && this.tempColorLink) {
+                this.newProd.colorList.push({ cName: this.tempColorName, imgLink: this.tempColorLink });
+                this.tempColorName = '';
+                this.tempColorLink = '';
+            } else {
+                alert('দয়া করে কালারের নাম ও ছবির লিংক দুটিই পূরণ করুন।');
+            }
+        },
+
+        publishNewProduct() {
+            this.newProd.id = Date.now();
+            this.products.unshift({ ...this.newProd });
+            localStorage.setItem('ms_lux_db', JSON.stringify(this.products));
+            this.newProd = { id: '', name: '', category: 'Saree', price: '', image: '', description: '', colorList: [] };
+            this.currentView = 'user';
+            alert('প্রোডাক্টটি সফলভাবে প্রিমিয়াম গ্যালারিতে লাইভ হয়েছে!');
+        },
+
+        deleteProduct(index) {
+            if(confirm('প্রোডাক্টটি ডিলিট করতে চান?')) {
+                this.products.splice(index, 1);
+                localStorage.setItem('ms_lux_db', JSON.stringify(this.products));
+            }
+        },
+
+        submitOrderToGoogleForm() {
+            const formActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
+            const formData = new FormData();
+            
+            formData.append("entry.133960052", this.selectedProduct.name);
+            formData.append("entry.346357419", `নাম: ${this.orderForm.name} | কালার: ${this.activeColorName} | মোবাইল: ${this.orderForm.phone} | ঠিকানা: ${this.orderForm.address}`);
+            formData.append("entry.1542643813", `পরিমাণ: ${this.orderForm.qty} টি | পেমেন্ট পদ্ধতি: ${this.orderForm.payment} | TrxID: ${this.orderForm.trxId || 'N/A'}`);
+
+            fetch(formActionUrl, { method: "POST", mode: "no-cors", body: formData })
+            .then(() => {
+                alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।");
+                this.selectedProduct = null;
+            }).catch(() => {
+                alert("অর্ডার সাবমিট হয়েছে!");
+                this.selectedProduct = null;
+            });
+        },
+
+        sendWhatsAppRedirect() {
+            const payMsg = this.orderForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.orderForm.payment} (TrxID: ${this.orderForm.trxId || 'N/A'})`;
+            const template = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderForm.qty} টি\n💰 সর্বমোট মূল্য: ৳${this.selectedProduct.price * this.orderForm.qty}\n💳 পেমেন্ট: ${payMsg}\n\n👤 নাম: ${this.orderForm.name}\n📱 ফোন: ${this.orderForm.phone}\n📍 ঠিকানা: ${this.orderForm.address}`;
+            window.open(`https://wa.me/8801906109839?text=${encodeURIComponent(template)}`, '_blank');
+        }
+    }
+}
+
         tailwind.config = {
             theme: {
                 extend: {
