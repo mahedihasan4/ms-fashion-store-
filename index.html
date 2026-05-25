@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
+    <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -178,12 +179,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="bg-gray-50 p-5 rounded-2xl border text-xs">
                             <div class="flex text-amber-400 gap-0.5 mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                            <p class="text-gray-600 italic mb-2">"ফেব্রিক কোয়ালিটি অসাধারণ ছিল। স্টোনের কাজগুলো নিখুঁত এবং ৫ ইঞ্চি দূরত্বের প্যাটার্নটা দারুণ লাক্সারি লুক দিচ্ছে।"</p>
+                            <p class="text-gray-600 italic mb-2">"মাইক্রো জর্জেট শাড়িটার ফেব্রিক কোয়ালিটি অসাধারণ ছিল। স্টোনের কাজগুলো নিখুঁত এবং ৫ ইঞ্চি দূরত্বের প্যাটার্নটা দারুণ লাক্সারি লুক দিচ্ছে।"</p>
                             <h4 class="font-bold text-gray-800">- মেহজাবিন আক্তার, ঢাকা</h4>
                         </div>
                         <div class="bg-gray-50 p-5 rounded-2xl border text-xs">
                             <div class="flex text-amber-400 gap-0.5 mb-2"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                            <p class="text-gray-600 italic mb-2">"অর্ডার করার পর খুব দ্রুত ডেলিভারি পেয়েছি। কাপড়টা অনেক আরামদায়ক এবং কালার একদম ছবির মতোই নিখুঁত ছিল।"</p>
+                            <p class="text-gray-600 italic mb-2">"অর্ডার করার পর খুব দ্রুত ডেলিভারি পেয়েছি। থ্রি-পিসের কাপড়টা অনেক আরামদায়ক এবং কালার একদম ছবির মতোই নিখুঁত ছিল।"</p>
                             <h4 class="font-bold text-gray-800">- ফারহানা আহমেদ, চট্টগ্রাম</h4>
                         </div>
                         <div class="bg-gray-50 p-5 rounded-2xl border text-xs">
@@ -232,7 +233,7 @@
                                 <h4 class="font-bold text-xs text-gray-600 mb-2">উপলব্ধ কালার ভ্যারিয়েন্ট (ক্লিক করুন):</h4>
                                 <div class="flex flex-wrap gap-2">
                                     <template x-for="(colItem, idx) in selectedProduct.colors" :key="idx">
-                                        <button type="button" @click="selectColor(idx, colItem)" class="px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5" :class="activeColorIndex === idx ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'border-gray-200 bg-white text-gray-700'">
+                                        <button type="button" @click="selectColor(idx, colItem)" class="px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1" :class="activeColorIndex === idx ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'border-gray-200 bg-white text-gray-700'">
                                             <span class="w-2.5 h-2.5 rounded-full border bg-pink-400"></span>
                                             <span x-text="colItem.name"></span>
                                         </button>
@@ -261,7 +262,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">پেমেন্ট মেথড সিলেক্ট করুন:</label>
+                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">পেমেন্ট মেথড সিলেক্ট করুন:</label>
                                     <div class="grid grid-cols-3 gap-2">
                                         <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="orderForm.payment === 'COD' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'bg-white text-gray-500'">
                                             <input type="radio" value="COD" x-model="orderForm.payment" class="hidden">
@@ -283,12 +284,12 @@
 
                                 <div x-show="orderForm.payment === 'bKash'" class="bg-pink-50 border border-pink-200 p-2.5 rounded-xl text-xs" x-cloak>
                                     <p class="font-bold text-pink-800">📱 বিকাশ পার্সোনাল: 01906109839</p>
-                                    <input type="text" x-model="orderForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-pink-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                    <input type="text" x-model="orderForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border rounded-lg p-2 text-xs bg-white focus:outline-none">
                                 </div>
 
                                 <div x-show="orderForm.payment === 'Nagad'" class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-xs" x-cloak>
                                     <p class="font-bold text-orange-800">📱 নগদ পার্সোনাল: 01906109839</p>
-                                    <input type="text" x-model="orderForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-orange-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                    <input type="text" x-model="orderForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border rounded-lg p-2 text-xs bg-white focus:outline-none">
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-2 pt-1">
@@ -392,7 +393,7 @@
                 <p class="hover:text-brand-pink cursor-pointer" @click="selectedCategory = 'Two Piece'; scrollToProducts()">টু-পিস কালেকশন</p>
             </div>
             <div class="space-y-1">
-                <h4 class="text-white font-bold mb-2">হেল্পライン</h4>
+                <h4 class="text-white font-bold mb-2">হেল্পলাইন</h4>
                 <p><i class="fa-solid fa-phone text-brand-pink mr-1"></i> হটলাইন: 01906109839</p>
                 <p><i class="fa-solid fa-location-dot text-brand-pink mr-1"></i> ঢাকা, বাংলাদেশ</p>
             </div>
@@ -427,7 +428,7 @@
                     if (saved) {
                         this.products = JSON.parse(saved);
                     } else {
-                        // ডিফল্ট ডেমো ডাটা
+                        // ডিফল্ট ডেমো ডেটা মেলা ফিল্ড স্ট্রাকচার অনুযায়ী
                         this.products = [
                             { 
                                 id: 1, 
@@ -518,7 +519,6 @@
                     let finalColorsArray = [];
                     
                     if (this.newProd.colorList.length > 0) {
-                        // অ্যাডমিন প্যানেল থেকে অ্যাড করা প্রতিটি কালার এবং তার নিজস্ব ইমেজ সঠিকভাবে স্ট্রাকচারে পুশ করা হচ্ছে
                         this.newProd.colorList.forEach(item => {
                             finalColorsArray.push({
                                 name: item.cName,
@@ -526,7 +526,6 @@
                             });
                         });
                     } else {
-                        // যদি কোনো কালার না দেওয়া হয় তবে মেইন কভার ছবি টাই ডিফল্ট হিসেবে বসবে
                         finalColorsArray.push({
                             name: "Default Color",
                             images: [this.newProd.image]
@@ -545,7 +544,6 @@
                     this.products.unshift(readyProductObj);
                     localStorage.setItem('ms_lux_master_db', JSON.stringify(this.products));
                     
-                    // রিসেট ফর্ম
                     this.newProd = { id: '', name: '', category: 'Saree', price: '', image: '', description: '', colorList: [] };
                     this.currentView = 'user';
                     alert('প্রোডাক্টটি সফলভাবে এবং সম্পূর্ণ নো-কোড ইমেজসহ গ্যালারিতে লাইভ হয়েছে!');
@@ -562,7 +560,6 @@
                     const formActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScBvOLse6ihkMZfSZyoBpUJL9eemSTaIr9IaYRivD3dlM08wg/formResponse";
                     const formData = new FormData();
                     
-                    // অর্ডারের সময় কাস্টমারের সিলেক্ট করা প্রোডাক্ট নাম, কালারের নাম ও ছবির লিংক পাঠানো হচ্ছে
                     formData.append("entry.133960052", this.selectedProduct.name);
                     formData.append("entry.346357419", `নাম: ${this.orderForm.name} | সিলেক্টেড কালার: ${this.activeColorName} | কালারের ছবি লিংক: ${this.activeColorImage} | মোবাইল: ${this.orderForm.phone} | ঠিকানা: ${this.orderForm.address}`);
                     formData.append("entry.1542643813", `পরিমাণ: ${this.orderForm.qty} টি | পেমেন্ট পদ্ধতি: ${this.orderForm.payment} | TrxID: ${this.orderForm.trxId || 'N/A'}`);
