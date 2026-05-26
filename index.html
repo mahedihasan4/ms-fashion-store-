@@ -683,7 +683,7 @@
                     // আপনার নতুন দেওয়া Entry ID অনুযায়ী ডেটা বাইন্ডিং
                     const formBodyData = new URLSearchParams();
                     formBodyData.append("entry.506007108", this.selectedProduct.name);
-                    formBodyData.append("entry.879137072", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | এরিয়া: ${areaText} | ঠিকানা: ${this.checkoutForm.address}`);
+                    formBodyData.append("entry.879137072", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ছবি: ${this.activeColorImage} | ফোন: ${this.checkoutForm.phone} | এরিয়া: ${areaText} | ঠিকানা: ${this.checkoutForm.address}`);
                     formBodyData.append("entry.1004688583", `পরিমাণ: ${this.orderQuantity} টি | ডেলিভারি চার্জ: ৳${deliveryCharge} | সর্বমোট বিল: ৳${finalGrandTotal} | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
 
                     alert("🎉 প্রসেস হচ্ছে... দয়া করে সামান্য অপেক্ষা করুন।");
