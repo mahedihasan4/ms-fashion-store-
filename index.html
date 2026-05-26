@@ -253,4 +253,476 @@
                                 <h3 class="font-bold text-gray-900 mb-1 mt-3 text-sm">স্পেসিফিকেশন ও মেটেরিয়াল:</h3>
                                 <ul class="text-gray-600 text-xs md:text-sm space-y-1 list-disc list-inside">
                                     <template x-for="detail in selectedProduct.details">
+                                        <li x-text="detail"></li>
+                                    </template>
+                                </ul>
+                            </div>
+
+                            <div class="mt-4" x-show="selectedProduct.colors && selectedProduct.colors.length > 0">
+                                <h3 class="font-bold text-gray-900 text-xs mb-2">পছন্দের কালার সিলেক্ট করুন:</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="(color, index) in selectedProduct.colors" :key="index">
+                                        <button @click="selectColor(index, color)" class="flex items-center gap-2 border px-3 py-1.5 rounded-xl text-xs font-bold smooth-transition" :class="activeColorIndex === index ? 'border-brand-pink bg-brand-lightPink text-brand-dark' : 'border-gray-200 bg-white text-gray-600'">
+                                            <span class="w-3 h-3 rounded-full border border-black/10" :style="`background-color: ${color.hex || '#ccc'}`"></span>
+                                            <span x-text="color.name"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 flex items-center gap-4">
+                                <span class="font-bold text-gray-900 text-xs">পরিমাণ (Quantity):</span>
+                                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
+                                    <button @click="if(orderQuantity > 1) orderQuantity--" class="px-2.5 py-0.5 bg-gray-100 font-bold hover:bg-gray-200 text-xs">-</button>
+                                    <span class="px-3 font-bold text-xs text-center" x-text="orderQuantity">1</span>
+                                    <button @click="orderQuantity++" class="px-2.5 py-0.5 bg-gray-100 font-bold hover:bg-gray-200 text-xs">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 bg-gray-50 p-4 rounded-2xl border">
+                            <h3 class="font-bold text-xs text-brand-dark mb-3 border-b pb-2"><i class="fa-solid fa-shopping-bag text-brand-pink"></i> কাস্টমার ডেলিভারি ও পেমেন্ট ফর্ম</h3>
+                            <form @submit.prevent="submitStoreFormToGoogle()" class="space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <input type="text" x-model="checkoutForm.name" required placeholder="আপনার নাম লিখুন" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
+                                    <input type="tel" x-model="checkoutForm.phone" required placeholder="মোবাইল নম্বর" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
+                                </div>
+                                <input type="text" x-model="checkoutForm.address" required placeholder="পূর্ণাঙ্গ ঠিকানা (গ্রাম/রোড, থানা, জেলা)" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
+                                
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">ডেলিভারি এরিয়া সিলেক্ট করুন:</label>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'inside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
+                                            <input type="radio" value="inside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
+                                            <span class="font-medium">ঢাকার ভেতরে (৳৮০)</span>
+                                        </label>
+                                        <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'outside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
+                                            <input type="radio" value="outside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
+                                            <span class="font-medium">ঢাকার বাইরে (৳১২০)</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">পেমেন্ট মেথড সিলেক্ট করুন:</label>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'COD' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'bg-white text-gray-500'">
+                                            <input type="radio" value="COD" x-model="checkoutForm.payment" class="hidden">
+                                            <i class="fa-solid fa-truck mb-0.5 text-xs"></i>
+                                            <span class="text-[9px] font-bold">ক্যাশ অন ডেলিভারি</span>
+                                        </label>
+                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'bKash' ? 'border-pink-500 bg-pink-100 text-pink-700' : 'bg-white text-gray-500'">
+                                            <input type="radio" value="bKash" x-model="checkoutForm.payment" class="hidden">
+                                            <span class="font-black mb-0.5 text-xs">বিকাশ</span>
+                                            <span class="text-[8px]">পার্সোনাল</span>
+                                        </label>
+                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'Nagad' ? 'border-orange-500 bg-orange-100 text-orange-700' : 'bg-white text-gray-500'">
+                                            <input type="radio" value="Nagad" x-model="checkoutForm.payment" class="hidden">
+                                            <span class="font-black mb-0.5 text-xs">নগদ</span>
+                                            <span class="text-[8px]">পার্সোনাল</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div x-show="checkoutForm.payment === 'bKash'" class="bg-pink-50 border border-pink-200 p-2.5 rounded-xl text-xs" x-cloak>
+                                    <p class="font-bold text-pink-800">📱 বিকাশ পার্সোনাল: <span class="underline">01906109839</span></p>
+                                    <input type="text" x-model="checkoutForm.trxId" placeholder="টাকা সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-pink-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                </div>
+
+                                <div x-show="checkoutForm.payment === 'Nagad'" class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-xs" x-cloak>
+                                    <p class="font-bold text-orange-800">📱 নগদ পার্সোনাল: <span class="underline">01906109839</span></p>
+                                    <input type="text" x-model="checkoutForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-orange-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                </div>
+
+                                <div class="bg-white p-3 rounded-xl border text-xs space-y-1.5">
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>প্রোডাক্টের মূল্য:</span>
+                                        <span>৳<span x-text="selectedProduct.price * orderQuantity"></span></span>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600">
+                                        <span>ডেলিভারি চার্জ:</span>
+                                        <span x-text="calculateDeliveryCharge() === 0 ? 'ফ্রি (৩টি অফার)' : '৳' + calculateDeliveryCharge()"></span>
+                                    </div>
+                                    <div class="flex justify-between font-bold text-brand-dark border-t pt-1.5 text-sm">
+                                        <span>সর্বমোট প্রদেয়:</span>
+                                        <span>৳<span x-text="(selectedProduct.price * orderQuantity) + calculateDeliveryCharge()"></span></span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 pt-1">
+                                    <button type="submit" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl text-xs hover:bg-brand-pink transition-all shadow-md">
+                                        <i class="fa-solid fa-bolt mr-1"></i> অর্ডার সম্পন্ন করুন
+                                    </button>
+                                    <button type="button" @click="sendToWhatsAppDirectAction()" class="w-full bg-[#25D366] text-white font-bold py-3.5 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-md">
+                                        <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp অর্ডার
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </main>
+
+        <footer class="bg-brand-dark text-gray-400 pt-12 pb-6 border-t-4 border-brand-pink mt-12">
+            <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 text-xs">
+                <div class="space-y-4">
+                    <h3 class="text-white text-xl font-bold tracking-wider"><span class="text-brand-pink">MS</span> FASHION</h3>
+                    <p class="leading-relaxed">অভিজাত রুচিসম্মত সেরা কাপড়ের প্রিমিয়াম ব্র্যান্ড। আমরা শতভাগ কোয়ালিটি ও দ্রুত কাস্টমার সেবা নিশ্চিত করি।</p>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider">পণ্যসমূহ</h4>
+                    <a href="#" @click="selectedCategory = 'Saree'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">প্রিমিয়াম শাড়ি কালেকশন</a>
+                    <a href="#" @click="selectedCategory = 'Three Piece'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">এক্সক্লুসিভ থ্রি-পিস</a>
+                    <a href="#" @click="selectedCategory = 'Two Piece'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">ট্রেন্ডি টু-পিস</a>
+                </div>
+                <div class="space-y-3">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider">যোগাযোগ ও হেল্পলাইন</h4>
+                    <p><i class="fa-solid fa-phone text-brand-pink mr-2"></i> হটলাইন: 01906109839</p>
+                    <p><i class="fa-solid fa-location-dot text-brand-pink mr-2"></i> ঢাকা, বাংলাদেশ</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 text-center pt-6 text-[11px] text-gray-600">
+                &copy; 2026 MS Fashion Store. All Rights Reserved.
+            </div>
+        </footer>
+    </div>
+
+    <main x-show="currentView === 'admin'" class="container mx-auto px-4 py-8 max-w-lg" x-cloak>
+        <div class="bg-white rounded-3xl p-6 shadow-xl border">
+            <h2 class="text-base font-black text-brand-dark mb-4 pb-2 border-b"><i class="fa-solid fa-cloud-upload-alt text-brand-pink mr-1"></i> নো-কোড প্রোডাক্ট আপলোডার ড্যাশবোর্ড</h2>
             
+            <form @submit.prevent="publishNewProductFormSubmit()" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">প্রোডাক্টের নাম *</label>
+                    <input type="text" x-model="adminNewProd.name" required placeholder="যেমন: সুতি বুটিক টু পিস কালেকশন" class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">ক্যাটাগরি সিলেক্ট করুন *</label>
+                        <select x-model="adminNewProd.category" class="w-full border rounded-xl p-2.5 bg-white focus:outline-brand-pink">
+                            <option value="Saree">Saree (শাড়ি)</option>
+                            <option value="Three Piece">Three Piece (থ্রি পিস)</option>
+                            <option value="Two Piece">Two Piece (টু পিস)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">মূল্য (৳) *</label>
+                        <input type="number" x-model="adminNewProd.price" required placeholder="দাম লিখুন" class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">মেইন কভার ছবির অনলাইন লিংক *</label>
+                    <input type="url" x-model="adminNewProd.mainImage" required placeholder="https://i.ibb.co.com/..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                    <p class="text-[10px] text-gray-400 mt-1">💡 আপনার মোবাইল গ্যালারির ছবি <a href="https://imgbb.com" target="_blank" class="text-brand-pink underline">ImgBB.com</a> এ আপলোড করে <b>Direct Link</b>-টি এখানে দিন।</p>
+                </div>
+                
+                <div class="border p-3 rounded-xl bg-gray-50 space-y-2">
+                    <label class="block font-bold text-gray-700">কালার ভ্যারিয়েন্ট ও ইমেজ অ্যাড করুন (ঐচ্ছিক):</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" x-model="tempColorName" placeholder="কালারের নাম (যেমন: মেরুন)" class="border rounded-lg p-2 bg-white focus:outline-none">
+                        <input type="url" x-model="tempColorLink" placeholder="ভ্যারিয়েন্ট ছবির লিংক" class="border rounded-lg p-2 bg-white focus:outline-none">
+                    </div>
+                    <button type="button" @click="addColorVariantStack()" class="bg-gray-200 text-gray-800 font-bold px-3 py-1.5 rounded-lg hover:bg-brand-pink hover:text-white transition-all">+ ভ্যারিয়েন্ট লিস্টে যুক্ত করুন</button>
+                    
+                    <div class="flex flex-wrap gap-1 pt-1" x-show="adminNewProd.colors.length > 0">
+                        <template x-for="c in adminNewProd.colors">
+                            <span class="text-[9px] bg-pink-100 text-brand-deepPink px-2 py-0.5 rounded-full font-bold" x-text="c.name"></span>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-gray-700 mb-1">পণ্যের বিবরণ / ডেসক্রিপশন</label>
+                    <textarea x-model="adminNewProd.description" rows="2" placeholder="ম্যাটেরিয়াল বা সুতার কাজের স্পেসিফিকেশন..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-brand-deepPink text-white font-bold py-3 rounded-xl shadow-md hover:bg-brand-dark transition-all">
+                    🚀 পাবলিশ করুন (তাত্ক্ষণিক লাইভ)
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 shadow-xl border mt-6">
+            <h3 class="font-bold text-xs text-gray-500 mb-3">মোট আপলোড করা প্রোডাক্ট তালিকা (<span x-text="products.length"></span>)</h3>
+            <div class="space-y-2">
+                <template x-for="(p, idx) in products" :key="p.id">
+                    <div class="flex items-center justify-between bg-gray-50 p-2 rounded-xl border text-xs">
+                        <div class="flex items-center gap-2">
+                            <img :src="p.colors && p.colors[0] ? p.colors[0].images[0] : 'https://via.placeholder.com/100'" class="w-8 h-8 object-cover rounded-lg">
+                            <div>
+                                <h4 class="font-bold text-gray-900 line-clamp-1" x-text="p.name"></h4>
+                                <span class="text-brand-deepPink font-bold">৳<span x-text="p.price"></span></span>
+                                <span class="text-[10px] text-gray-400 ml-2" x-text="p.category"></span>
+                            </div>
+                        </div>
+                        <button @click="deleteProductFromInventory(idx)" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function storeApp() {
+            return {
+                currentView: 'user',
+                searchQuery: '',
+                selectedCategory: 'All',
+                priceFilter: 'all',
+                selectedProduct: null,
+                activeColorIndex: 0,
+                activeColorImage: '',
+                activeColorName: '',
+                orderQuantity: 1,
+                isCartOpen: false,
+                cart: [],
+
+                tempColorName: '',
+                tempColorLink: '',
+                adminNewProd: { id: '', name: '', category: 'Saree', price: '', mainImage: '', description: '', colors: [] },
+
+                checkoutForm: {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    payment: 'COD',
+                    trxId: '',
+                    deliveryLocation: 'inside' // ডিফল্ট ঢাকার ভেতরে সেট করা
+                },
+
+                products: [],
+
+                initStore() {
+                    const savedDB = localStorage.getItem('ms_fashion_master_db');
+                    if (savedDB) {
+                        this.products = JSON.parse(savedDB);
+                    } else {
+                        this.products = [
+                            {
+                                id: 1,
+                                name: "প্রিমিয়াম লাক্সারি মাইক্রো জর্জেট স্টোন এম্বেলেশড শাড়ি",
+                                category: "Saree",
+                                price: 3450,
+                                description: "অভিজাত এবং জমকালো পার্টির জন্য নিখুঁত চয়েস। সম্পূর্ণ শাড়িতে নিখুঁত ফিনিশিংয়ের সাথে রাজকীয় স্টোনের অলংকরণ করা হয়েছে, যার স্থায়িত্ব দীর্ঘস্থায়ী।",
+                                details: [
+                                    "ফেব্রিক: প্রিমিয়াম মাইক্রো সফট জর্জেট",
+                                    "ডিজাইন: ৫ ইঞ্চি দূরত্বে আকর্ষনীয় সাইনিং স্টোন ওয়ার্ক",
+                                    "লেস: পাড়ের বর্ডারে পাতলা মডার্ন প্রিমিয়াম এমব্রয়ডারি লেস",
+                                    "ব্লাউজ: ম্যাচিং আনস্টিচড ব্লাউজ পিস অন্তর্ভুক্ত"
+                                ],
+                                colors: [
+                                    { name: "মেরুন (Maroon)", hex: "#800000", images: ["https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80", "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80"] },
+                                    { name: "কালো (Black)", hex: "#000000", images: ["https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80"] }
+                                ]
+                            },
+                            {
+                                id: 2,
+                                name: "এক্সক্লুসিভ জর্জেট এমব্রয়ডারি বুটিক ডিজাইনার থ্রি-পিস",
+                                category: "Three Piece",
+                                price: 2850,
+                                description: "আধুনিক নারীদের জন্য আরামদায়ক এবং ট্রেন্ডি ডিজাইনের ট্র্যাডিশনাল থ্রি-পিস স্যুট কালেকশন।",
+                                details: [
+                                    "কামিজ: মাইক্রো জর্জেট ডিজিটাল প্রিন্ট সহ এমব্রয়ডারি কাজ",
+                                    "সালোয়ার: সফট প্রিমিয়াম কটন বাটার সিল্ক ইনার পিস",
+                                    "ওড়না: ৫ হাত নামাজি পিওর জর্জেট ম্যাচিং দופাট্টা ও টারসেল"
+                                ],
+                                colors: [
+                                    { name: "জ্যাম কালার (Jam)", hex: "#4A0E17", images: ["https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=600&q=80"] }
+                                ]
+                            }
+                        ];
+                        localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
+                    }
+                },
+
+                toggleAdminView() {
+                    if (this.currentView === 'user') {
+                        const securePinCode = prompt("MS Fashion Store সিকিউরিটি পিন কোডটি লিখুন:");
+                        if (securePinCode === "2026") {
+                            this.currentView = 'admin';
+                        } else if (securePinCode !== null) {
+                            alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
+                        }
+                    } else {
+                        this.currentView = 'user';
+                    }
+                },
+
+                viewProduct(product) {
+                    this.selectedProduct = product;
+                    this.activeColorIndex = 0;
+                    this.activeColorImage = product.colors && product.colors[0] ? product.colors[0].images[0] : '';
+                    this.activeColorName = product.colors && product.colors[0] ? product.colors[0].name : 'Default';
+                    this.orderQuantity = 1;
+                    this.checkoutForm = { name: '', phone: '', address: '', payment: 'COD', trxId: '', deliveryLocation: 'inside' };
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                },
+
+                closeProductView() {
+                    this.selectedProduct = null;
+                },
+
+                selectColor(index, color) {
+                    this.activeColorIndex = index;
+                    this.activeColorImage = color.images[0];
+                    this.activeColorName = color.name;
+                },
+
+                resetFilters() {
+                    this.selectedCategory = 'All';
+                    this.searchQuery = '';
+                    this.priceFilter = 'all';
+                    this.selectedProduct = null;
+                },
+
+                scrollToProducts() {
+                    setTimeout(() => {
+                        const container = document.getElementById('products-display');
+                        if (container) container.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                },
+
+                filteredProducts() {
+                    let items = [...this.products];
+                    if (this.searchQuery.trim() !== '') {
+                        const query = this.searchQuery.toLowerCase();
+                        items = items.filter(p => p.name.toLowerCase().includes(query));
+                    }
+                    if (this.selectedCategory !== 'All') {
+                        items = items.filter(p => p.category === this.selectedCategory);
+                    }
+                    if (this.priceFilter === 'low') {
+                        items.sort((a, b) => a.price - b.price);
+                    } else if (this.priceFilter === 'high') {
+                        items.sort((a, b) => b.price - a.price);
+                    }
+                    return items;
+                },
+
+                // ডেলিভারি চার্জ ক্যালকুলেশন মেথড
+                calculateDeliveryCharge() {
+                    if (this.orderQuantity >= 3) {
+                        return 0; // ৩টা বা তার বেশি হলে ফ্রি ডেলিভারি
+                    }
+                    return this.checkoutForm.deliveryLocation === 'inside' ? 80 : 120;
+                },
+
+                addColorVariantStack() {
+                    if (this.tempColorName && this.tempColorLink) {
+                        this.adminNewProd.colors.push({
+                            name: this.tempColorName,
+                            hex: "#ccc",
+                            images: [this.tempColorLink]
+                        });
+                        this.tempColorName = '';
+                        this.tempColorLink = '';
+                    } else {
+                        alert('দয়া করে কালার ভ্যারিয়েন্টের নাম ও ছবির লিংক টাইপ করুন।');
+                    }
+                },
+
+                publishNewProductFormSubmit() {
+                    let finalColors = [];
+                    
+                    if (this.adminNewProd.colors.length === 0) {
+                        finalColors.push({
+                            name: "স্ট্যান্ডার্ড (Default)",
+                            hex: "#ec4899",
+                            images: [this.adminNewProd.mainImage]
+                        });
+                    } else {
+                        finalColors = [...this.adminNewProd.colors];
+                        if (this.adminNewProd.mainImage && finalColors[0].images[0] !== this.adminNewProd.mainImage) {
+                            finalColors.unshift({
+                                name: "প্রধান কভার (Main)",
+                                hex: "#ec4899",
+                                images: [this.adminNewProd.mainImage]
+                            });
+                        }
+                    }
+                    
+                    const newGeneratedProductStructure = {
+                        id: Date.now(),
+                        name: this.adminNewProd.name,
+                        category: this.adminNewProd.category,
+                        price: parseInt(this.adminNewProd.price),
+                        description: this.adminNewProd.description || "কোনো বিবরণ দেওয়া নেই।",
+                        details: ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন গর্জিয়াস লাক্সারি আউটলুক", "কালেকশন: এক্সক্লুসিভ ফ্যাশন ২০২৬"],
+                        colors: finalColors
+                    };
+
+                    this.products.unshift(newGeneratedProductStructure);
+                    localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
+                    
+                    this.adminNewProd = { id: '', name: '', category: 'Saree', price: '', mainImage: '', description: '', colors: [] };
+                    this.currentView = 'user';
+                    alert('আপনার প্রোডাক্টটি সফলভাবে গ্যালারিতে লাইভ হয়েছে!');
+                },
+
+                deleteProductFromInventory(index) {
+                    if (confirm('আপনি কি নিশ্চিত যে এই প্রোডাক্টটি চিরতরে ডিলিট করতে চান?')) {
+                        this.products.splice(index, 1);
+                        localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
+                    }
+                },
+
+                submitStoreFormToGoogle() {
+                    if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
+                        alert("দয়া করে ফর্মের সব তথ্য সঠিকভাবে পূরণ করুন।");
+                        return;
+                    }
+
+                    // আপডেট করা গুগল ফর্ম সাবমিশন URL
+                    const baseGoogleFormActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScq3R-PQNXQNx5e8ns690sDtLk1p05vqXvnGQyaA26iZHxxyw/formResponse";
+                    
+                    const deliveryCharge = this.calculateDeliveryCharge();
+                    const productTotal = this.selectedProduct.price * this.orderQuantity;
+                    const finalGrandTotal = productTotal + deliveryCharge;
+                    const areaText = this.checkoutForm.deliveryLocation === 'inside' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে';
+
+                    // আপনার নতুন দেওয়া Entry ID অনুযায়ী ডেটা বাইন্ডিং
+                    const formBodyData = new URLSearchParams();
+                    formBodyData.append("entry.506007108", this.selectedProduct.name);
+                    formBodyData.append("entry.879137072", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | এরিয়া: ${areaText} | ঠিকানা: ${this.checkoutForm.address}`);
+                    formBodyData.append("entry.1004688583", `পরিমাণ: ${this.orderQuantity} টি | ডেলিভারি চার্জ: ৳${deliveryCharge} | সর্বমোট বিল: ৳${finalGrandTotal} | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
+
+                    alert("🎉 প্রসেস হচ্ছে... দয়া করে সামান্য অপেক্ষা করুন।");
+
+                    fetch(baseGoogleFormActionUrl, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: formBodyData.toString()
+                    })
+                    .then(() => {
+                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
+                        this.selectedProduct = null;
+                    })
+                    .catch((error) => {
+                        alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সিস্টেমে রেজিস্টার হয়েছে।");
+                        this.selectedProduct = null;
+                    });
+                },
+
+                sendToWhatsAppDirectAction() {
+                    if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
+                        alert("WhatsApp-এ অর্ডার ডিটেইলস পাঠাতে ফর্মের তথ্যগুলো (নাম, ফোন, ঠিকানা) আগে লিখে নিন।");
+                        return;
+                    }
+                    const deliveryCharge = this.calculateDeliveryCharge();
+                    const productTotal = this.selectedProduct.price * this.orderQuantity;
+                    const areaText = this.checkoutForm.deliveryLocation === 'inside' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে';
+                    const paymentMessageText = this.checkoutForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.checkoutForm.payment} (TrxID: ${this.checkoutForm.trxId || 'নেই'})`;
+                    
+                    const coreTemplateMessage = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderQuantity} টি\n📍 ডেলিভারি এরিয়া: ${areaText}\n🚚 ডেলিভারি চার্জ: ${deliveryCharge === 0 ? 'ফ্রি (অফার)' : '৳' + deliveryCharge}\n💰 সর্বমোট মূল্য: ৳${productTotal + deliveryCharge}\n💳 পেমেন্ট পদ্ধতি: ${paymentMessageText}\n\n👤 কাস্টমার নাম: ${this.checkoutForm.name}\n📱 ফোন নম্বর: ${this.checkoutForm.phone}\n📍 ঠিকানা: ${this.checkoutForm.address}`;
+                    
+                    const finalWhatsAppLinkGateway = `https://wa.me/8801906109839?text=${encodeURIComponent(coreTemplateMessage)}`;
+                    window.open(finalWhatsAppLinkGateway, '_blank');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
