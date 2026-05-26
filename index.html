@@ -6,6 +6,23 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
+    <meta name="google-site-verification" content="fd1EJOaKGAYoPWh3jOSOOCt4-uKENrarrxkttPtYkFo" />
+
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '130008000090726');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=130008000090726&ev=PageView&noscript=1"
+    /></noscript>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -298,7 +315,7 @@
                                         </label>
                                         <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'outside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
                                             <input type="radio" value="outside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
-                                            <span class="font-medium">ঢাকার বাইরে (৳১২ো)</span>
+                                            <span class="font-medium">ঢাকার বাইরে (৳১২০)</span>
                                         </label>
                                     </div>
                                 </div>
@@ -629,7 +646,7 @@
                         });
                         this.tempColorName = '';
                         this.tempColorLink = '';
-                        this.tempColorHex = '#ec4899'; // Reset back to theme standard pink
+                        this.tempColorHex = '#ec4899';
                     } else {
                         alert('দয়া করে কালার ভ্যারিয়েন্টের নাম ও ছবির লিংক টাইপ করুন।');
                     }
@@ -655,7 +672,6 @@
                         }
                     }
 
-                    // Parse Custom Specifications
                     let bulletSpecs = ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন গর্জিয়াস লাক্সারি আউটলুক", "কালেকশন: এক্সক্লুসিভ ফ্যাশন ২০২৬"];
                     if (this.adminNewProd.rawDetails && this.adminNewProd.rawDetails.trim() !== '') {
                         bulletSpecs = this.adminNewProd.rawDetails.split(',').map(item => item.trim()).filter(item => item !== '');
@@ -715,10 +731,31 @@
                         body: formBodyData.toString()
                     })
                     .then(() => {
+                        // 🎯 Meta Pixel Purchase Tracking on Success
+                        if (typeof fbq === 'function') {
+                            fbq('track', 'Purchase', {
+                                value: productTotal,
+                                currency: 'BDT',
+                                content_name: this.selectedProduct.name,
+                                content_type: 'product',
+                                num_items: this.orderQuantity
+                            });
+                        }
+
                         alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
                         this.selectedProduct = null;
                     })
                     .catch((error) => {
+                        // Backup Tracking in case of silent CORS errors
+                        if (typeof fbq === 'function') {
+                            fbq('track', 'Purchase', {
+                                value: productTotal,
+                                currency: 'BDT',
+                                content_name: this.selectedProduct.name,
+                                content_type: 'product',
+                                num_items: this.orderQuantity
+                            });
+                        }
                         alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সিস্টেমে রেজিস্টার হয়েছে।");
                         this.selectedProduct = null;
                     });
