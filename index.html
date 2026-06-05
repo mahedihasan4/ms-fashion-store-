@@ -100,7 +100,7 @@
                         <span>শাড়ি</span> <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
                     </button>
                     <button @click="selectedCategory = 'Three Piece'; sidebarOpen = false; scrollToProducts();" class="w-full text-left p-3 rounded-xl font-medium smooth-transition hover:bg-brand-lightPink flex items-center justify-between" :class="selectedCategory === 'Three Piece' ? 'bg-brand-lightPink text-brand-deepPink' : ''">
-                        <span>ث্রি পিস</span> <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
+                        <span>থ্রি-পিস</span> <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
                     </button>
                     <button @click="selectedCategory = 'Two Piece'; sidebarOpen = false; scrollToProducts();" class="w-full text-left p-3 rounded-xl font-medium smooth-transition hover:bg-brand-lightPink flex items-center justify-between" :class="selectedCategory === 'Two Piece' ? 'bg-brand-lightPink text-brand-deepPink' : ''">
                         <span>টু পিস</span> <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
@@ -350,11 +350,11 @@
                                     <div class="grid grid-cols-2 gap-2">
                                         <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'inside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
                                             <input type="radio" value="inside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
-                                            <span class="font-medium">ঢাকার ভেতরে (৳৮০)</span>
+                                            <span class="font-medium">ঢাকার ভেতরে (৳৭০)</span>
                                         </label>
                                         <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'outside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
                                             <input type="radio" value="outside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
-                                            <span class="font-medium">ঢাকার বাইরে (৳১২ো)</span>
+                                            <span class="font-medium">ঢাকার বাইরে (৳১২০)</span>
                                         </label>
                                     </div>
                                 </div>
