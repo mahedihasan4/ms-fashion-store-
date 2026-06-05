@@ -23,6 +23,7 @@
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=130008000090726&ev=PageView&noscript=1"
     /></noscript>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,10 +31,11 @@
                 extend: {
                     colors: {
                         brand: {
-                            pink: '#FF69B4',
-                            deepPink: '#FF1493',
-                            lightPink: '#FFF0F5',
-                            dark: '#111111'
+                            pink: '#DB2777',
+                            deepPink: '#9D174D',
+                            lightPink: '#FDF2F8',
+                            dark: '#111827',
+                            gold: '#D97706'
                         }
                     }
                 }
@@ -47,77 +49,86 @@
     <style>
         [x-cloak] { display: none !important; }
         .smooth-transition { transition: all 0.3s ease-in-out; }
-        .zoom-effect:hover img { transform: scale(1.15); }
+        .zoom-effect:hover img { transform: scale(1.08); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade { animation: fadeIn 0.7s ease-in-out; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="storeApp()" x-init="initStore()">
+<body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="storeApp()" x-init="initStore()" @keydown.window="handleAdminShortcut($event)">
 
-    <div class="bg-brand-dark text-white text-center py-2 text-xs md:text-sm tracking-wide font-medium">
-        ✨ ফ্রি ডেলিভারি অফার! ৩টি প্রোডাক্ট অর্ডারে সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি! ✨
+    <div class="bg-brand-dark text-white text-center py-2 text-xs md:text-sm tracking-wide font-medium relative z-50">
+        ✨ ফ্রি  ডেলিভারি অফার! ৩টি প্রোডাক্ট অর্ডারে সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি! ✨
     </div>
 
-    <header class="bg-white shadow-sm sticky top-0 z-50 smooth-transition">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" @click="resetFilters(); currentView = 'user';" class="text-2xl md:text-3xl font-extrabold text-brand-dark tracking-wider flex items-center gap-2">
-                <span class="text-brand-pink">MS</span> FASHION <span class="text-xs bg-brand-pink text-white px-2 py-1 rounded-full uppercase">Store</span>
+    <header class="bg-white/95 backdrop-blur shadow-sm sticky top-0 z-40 smooth-transition border-b border-gray-100">
+        <div class="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
+            
+            <a href="#" @click="resetFilters(); currentView = 'user';" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-tr from-brand-deepPink to-brand-pink rounded-xl flex items-center justify-center shadow-md shadow-pink-200">
+                    <span class="text-white font-black text-xl tracking-tighter">MS</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-lg md:text-2xl font-black text-brand-dark tracking-tight leading-none group-hover:text-brand-pink transition-colors">FASHION</span>
+                    <span class="text-[10px] text-brand-gold font-bold tracking-widest uppercase">Premium Hub</span>
+                </div>
             </a>
 
-            <div class="hidden md:flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-2 w-1/3" x-show="currentView === 'user'">
-                <input type="text" x-model="searchQuery" placeholder="শাড়ি, থ্রি-পিস খুঁজুন..." class="bg-transparent w-full focus:outline-none text-sm">
+            <div class="hidden md:flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-2 w-1/3" x-show="currentView === 'user'">
+                <input type="text" x-model="searchQuery" placeholder="শাড়ি, থ্রি-পিস খুঁজুন..." class="bg-transparent w-full focus:outline-none text-sm text-gray-700">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
 
-            <div class="flex items-center gap-4">
-                <button @click="toggleAdminView()" class="bg-brand-dark text-white px-4 py-2 rounded-full text-xs font-bold shadow-md hover:bg-brand-pink transition-all flex items-center gap-1.5">
-                    <i class="fa-solid" :class="currentView === 'user' ? 'fa-lock' : 'fa-globe'"></i> 
-                    <span x-text="currentView === 'user' ? 'অ্যাডমিন প্যানেল' : 'ওয়েবসাইট দেখুন'"></span>
+            <div class="flex items-center gap-3">
+                <button @click="currentView = 'cart'; selectedProduct = null;" class="relative bg-gray-100 hover:bg-brand-lightPink hover:text-brand-pink p-2.5 rounded-full transition-all flex items-center justify-center" title="কার্ট দেখুন">
+                    <i class="fa-solid fa-shopping-bag text-lg"></i>
+                    <span class="absolute -top-1 -right-1 bg-brand-pink text-white rounded-full text-[10px] font-bold w-5 h-5 flex items-center justify-center" x-text="getCartCount()">0</span>
+                </button>
+                
+                <button x-show="currentView === 'admin'" @click="currentView = 'user'" class="bg-brand-dark text-white px-4 py-2 rounded-full text-xs font-bold shadow-md hover:bg-brand-pink transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-globe"></i> <span>ওয়েবসাইট দেখুন</span>
                 </button>
             </div>
         </div>
         
         <div class="md:hidden px-4 pb-3" x-show="currentView === 'user' && !selectedProduct">
-            <div class="flex items-center bg-gray-100 border border-gray-200 rounded-lg px-3 py-2">
+            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
                 <input type="text" x-model="searchQuery" placeholder="পছন্দের পোশাকটি খুঁজুন..." class="bg-transparent w-full focus:outline-none text-sm">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
         </div>
     </header>
 
-    <div x-show="currentView === 'user'">
+    <div x-show="currentView === 'user' || currentView === 'cart'">
         
-        <main x-show="!selectedProduct" x-cloak>
+        <main x-show="currentView === 'user' && !selectedProduct" class="animate-fade">
             
-            <section class="relative bg-brand-lightPink overflow-hidden h-[350px] md:h-[450px] flex items-center border-b">
-                <div class="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-brand-pink opacity-20 blur-3xl"></div>
-                <div class="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-brand-deepPink opacity-10 blur-3xl"></div>
-                
-                <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full relative z-10">
+            <section class="relative bg-gradient-to-b from-brand-lightPink to-white overflow-hidden h-[380px] md:h-[500px] flex items-center border-b border-gray-100">
+                <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center h-full relative z-10 gap-6">
                     <div class="space-y-4 md:space-y-6 text-center md:text-left">
-                        <span class="inline-block text-brand-deepPink font-extrabold uppercase tracking-widest text-xs bg-pink-100 px-4 py-1.5 rounded-full">New Collection 2026</span>
+                        <span class="inline-block text-brand-deepPink font-extrabold uppercase tracking-widest text-[11px] bg-pink-100 px-4 py-1.5 rounded-full shadow-sm">New Collection 2026</span>
                         <h1 class="text-3xl md:text-6xl font-black text-brand-dark leading-tight">
-                            • অভিজাত ফ্যাশনে <br>
+                            অভিজাত ফ্যাশনে <br>
                             <span class="text-brand-pink tracking-wide">অনন্য রূপান্তর</span>
                         </h1>
                         <p class="text-gray-600 text-xs md:text-sm max-w-sm mx-auto md:mx-0 leading-relaxed">
-                            সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের শাড়ি, এক্সক্লুসিভ থ্রি-পিস এবং ট্রেন্ডি টু-পিসের একচেটিয়া সমাহার।
+                            সেরা কাপড়ে তৈরি আকর্ষণীয় ডিজাইনের প্রিমিয়াম শাড়ি, এক্সক্লুসিভ থ্রি-পিস এবং ট্রেন্ডি টু-পিসের একচেটিয়া সমাহার।
                         </p>
                         <div class="pt-2">
-                            <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-pink smooth-transition text-xs uppercase tracking-wider shadow-md">
-                                কালেকশন দেখুন &nbsp;<i class="fa-solid fa-arrow-right"></i>
+                            <a href="#products-display" class="inline-block bg-brand-dark text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-pink smooth-transition text-xs uppercase tracking-wider shadow-lg hover:shadow-pink-200">
+                                কালেকশন দেখুন &nbsp;<i class="fa-solid fa-arrow-right animate-pulse"></i>
                             </a>
                         </div>
                     </div>
                     
-                    <div class="hidden md:flex justify-center items-center h-full relative">
-                        <div class="w-72 h-72 rounded-3xl border-4 border-dashed border-pink-200 absolute rotate-12"></div>
-                        <div class="w-72 h-72 rounded-3xl bg-white shadow-xl flex flex-col justify-center items-center p-6 relative z-10 rotate-3">
-                            <h2 class="text-4xl font-black text-brand-dark tracking-widest"><span class="text-brand-pink">MS</span> Store</h2>
-                            <div class="w-12 h-1 bg-brand-deepPink my-3 rounded-full"></div>
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Premium Fashion Hub</p>
-                            <div class="flex gap-3 text-brand-pink text-xs mt-6 opacity-70">
-                                <span>Saree</span> • <span>Three Piece</span> • <span>Two Piece</span>
+                    <div class="hidden md:block relative w-full h-[400px] overflow-hidden rounded-2xl shadow-2xl border-4 border-white">
+                        <template x-for="(slide, index) in slides" :key="index">
+                            <div x-show="activeSlide === index" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 transform scale-105" x-transition:enter-end="opacity-100 transform scale-100" class="absolute inset-0">
+                                <img :src="slide.image" :alt="slide.title" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-8">
+                                    <h3 class="text-white text-2xl font-black tracking-wide" x-text="slide.title"></h3>
+                                </div>
                             </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </section>
@@ -126,13 +137,13 @@
                 <div class="container mx-auto px-4">
                     <div class="text-center mb-10">
                         <h2 class="text-2xl md:text-4xl font-extrabold text-brand-dark">ক্যাটাগরি সিলেক্ট করুন</h2>
-                        <div class="w-20 h-1 bg-brand-pink mx-auto mt-3 rounded-full"></div>
+                        <div class="w-16 h-1 bg-brand-pink mx-auto mt-3 rounded-full"></div>
                     </div>
                     <div class="grid grid-cols-3 gap-3 md:gap-6">
                         <template x-for="cat in ['Saree', 'Three Piece', 'Two Piece']">
-                            <div @click="selectedCategory = cat; scrollToProducts()" class="cursor-pointer group relative overflow-hidden rounded-xl bg-gray-900 text-white h-24 md:h-40 flex items-center justify-center smooth-transition shadow-md">
+                            <div @click="selectedCategory = cat; scrollToProducts()" class="cursor-pointer group relative overflow-hidden rounded-2xl bg-gray-900 text-white h-28 md:h-44 flex items-center justify-center smooth-transition shadow-md hover:shadow-xl">
                                 <div class="absolute inset-0 bg-brand-dark opacity-40 group-hover:opacity-60 smooth-transition"></div>
-                                <div class="z-10 text-center">
+                                <div class="z-10 text-center px-2">
                                     <h3 class="font-bold text-sm md:text-2xl tracking-wide uppercase" x-text="cat === 'Saree' ? 'শাড়ি' : (cat === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></h3>
                                     <span class="text-[10px] md:text-xs text-pink-300 opacity-0 group-hover:opacity-100 smooth-transition block mt-1">কালেকশন দেখুন &rarr;</span>
                                 </div>
@@ -142,21 +153,21 @@
                 </div>
             </section>
 
-            <section id="products-display" class="py-12 bg-gray-50">
+            <section id="products-display" class="py-12 bg-gray-50 scroll-mt-20">
                 <div class="container mx-auto px-4">
                     
-                    <div class="bg-white p-4 rounded-xl shadow-sm mb-8 flex flex-wrap gap-4 items-center justify-between">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm mb-8 flex flex-wrap gap-4 items-center justify-between border border-gray-100">
                         <div class="flex flex-wrap gap-2">
-                            <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-brand-pink text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">সব প্রোডাক্ট</button>
-                            <button @click="selectedCategory = 'Saree'" :class="selectedCategory === 'Saree' ? 'bg-brand-pink text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">শাড়ি</button>
-                            <button @click="selectedCategory = 'Three Piece'" :class="selectedCategory === 'Three Piece' ? 'bg-brand-pink text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">থ্রি-পিস</button>
-                            <button @click="selectedCategory = 'Two Piece'" :class="selectedCategory === 'Two Piece' ? 'bg-brand-pink text-white' : 'bg-gray-100 text-gray-700'" class="px-4 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">টু-পিস</button>
+                            <button @click="selectedCategory = 'All'" :class="selectedCategory === 'All' ? 'bg-brand-pink text-white shadow-md shadow-pink-100' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-5 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">সব প্রোডাক্ট</button>
+                            <button @click="selectedCategory = 'Saree'" :class="selectedCategory === 'Saree' ? 'bg-brand-pink text-white shadow-md shadow-pink-100' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-5 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">শাড়ি</button>
+                            <button @click="selectedCategory = 'Three Piece'" :class="selectedCategory === 'Three Piece' ? 'bg-brand-pink text-white shadow-md shadow-pink-100' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-5 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">থ্রি-পিস</button>
+                            <button @click="selectedCategory = 'Two Piece'" :class="selectedCategory === 'Two Piece' ? 'bg-brand-pink text-white shadow-md shadow-pink-100' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'" class="px-5 py-2 rounded-full text-xs md:text-sm font-medium smooth-transition">টু-পিস</button>
                         </div>
                         
                         <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-gray-500">মূল্য ফিল্টার:</span>
-                                <select x-model="priceFilter" class="bg-gray-100 border-none rounded-lg text-xs md:text-sm p-2 focus:ring-1 focus:ring-brand-pink">
+                                <select x-model="priceFilter" class="bg-gray-100 border-none rounded-xl text-xs md:text-sm p-2.5 focus:ring-1 focus:ring-brand-pink text-gray-700">
                                     <option value="all">সব মূল্য</option>
                                     <option value="low">কম থেকে বেশি</option>
                                     <option value="high">বেশি থেকে কম</option>
@@ -167,22 +178,22 @@
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                         <template x-for="product in filteredProducts()" :key="product.id">
-                            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                            <div class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group border border-gray-100">
                                 <div class="relative overflow-hidden bg-gray-100 aspect-[3/4] cursor-pointer" @click="viewProduct(product)">
-                                    <span class="absolute top-2 left-2 bg-brand-dark text-white text-[10px] font-bold px-2 py-1 rounded-md z-10">NEW</span>
-                                    <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : 'https://via.placeholder.com/600x800?text=No+Image'" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                    <span class="absolute top-3 left-3 bg-brand-dark text-white text-[10px] font-bold px-2.5 py-1 rounded-md z-10 shadow">NEW</span>
+                                    <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : 'https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=600&q=80'" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                                 </div>
                                 <div class="p-3 md:p-5 flex-grow flex flex-col justify-between">
                                     <div>
                                         <span class="text-[11px] text-brand-pink font-semibold uppercase tracking-wider" x-text="product.category === 'Saree' ? 'শাড়ি' : (product.category === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></span>
-                                        <h3 class="font-bold text-gray-900 text-sm md:text-base mt-1 line-clamp-2 cursor-pointer hover:text-brand-pink" @click="viewProduct(product)" x-text="product.name"></h3>
+                                        <h3 class="font-bold text-gray-900 text-sm md:text-base mt-1 line-clamp-2 cursor-pointer hover:text-brand-pink transition-colors" @click="viewProduct(product)" x-text="product.name"></h3>
                                     </div>
                                     <div class="mt-4">
                                         <div class="flex items-center justify-between mb-3">
-                                            <span class="text-brand-deepPink font-extrabold text-base md:text-xl">৳ <span x-text="product.price"></span></span>
+                                            <span class="text-brand-deepPink font-black text-base md:text-2xl">৳<span x-text="product.price"></span></span>
                                         </div>
-                                        <button @click="viewProduct(product)" class="w-full bg-transparent border-2 border-brand-dark text-brand-dark font-bold text-xs md:text-sm py-2 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-300">
-                                            অর্ডার করুন
+                                        <button @click="viewProduct(product)" class="w-full bg-transparent border-2 border-brand-dark text-brand-dark font-bold text-xs md:text-sm py-2.5 rounded-xl hover:bg-brand-dark hover:text-white transition-all duration-300">
+                                            বিস্তারিত দেখুন
                                         </button>
                                     </div>
                                 </div>
@@ -198,11 +209,11 @@
             </section>
 
             <section class="my-12 container mx-auto px-4">
-                <div class="bg-gradient-to-r from-brand-pink to-brand-deepPink text-white rounded-2xl p-8 md:p-12 text-center relative overflow-hidden shadow-xl">
+                <div class="bg-gradient-to-r from-brand-pink to-brand-deepPink text-white rounded-3xl p-8 md:p-12 text-center relative overflow-hidden shadow-xl">
                     <div class="absolute inset-0 bg-black opacity-10"></div>
                     <h2 class="text-2xl md:text-4xl font-black mb-4 z-10 relative">MS Exclusive মেম্বারশিপ অফার!</h2>
                     <p class="text-sm md:text-lg max-w-xl mx-auto mb-6 opacity-90 z-10 relative">আমাদের প্রিমিয়াম কাস্টমার গ্রুপে যোগ দিয়ে প্রতিটি অর্ডারে আকর্ষণীয় ক্যাশব্যাক এবং প্রজেক্টের লাইভ প্রিভিউ অ্যাক্সেস পান।</p>
-                    <a href="https://wa.me/8801906109839" target="_blank" class="inline-block bg-white text-brand-deepPink font-bold px-8 py-3 rounded-full hover:bg-brand-dark hover:text-white smooth-transition shadow-md z-10 relative">যোগ দিন (WhatsApp)</a>
+                    <a href="https://wa.me/8801906109839" target="_blank" class="inline-block bg-white text-brand-deepPink font-bold px-8 py-3.5 rounded-xl hover:bg-brand-dark hover:text-white smooth-transition shadow-lg z-10 relative text-sm">যোগ দিন (WhatsApp)</a>
                 </div>
             </section>
 
@@ -210,21 +221,21 @@
                 <div class="container mx-auto px-4">
                     <div class="text-center mb-12">
                         <h2 class="text-2xl md:text-4xl font-extrabold text-brand-dark">কাস্টমারদের ভালোবাসা ও মতামত</h2>
-                        <div class="w-20 h-1 bg-brand-pink mx-auto mt-3 rounded-full"></div>
+                        <div class="w-16 h-1 bg-brand-pink mx-auto mt-3 rounded-full"></div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                            <div class="flex text-amber-400 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="flex text-amber-500 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
                             <p class="text-gray-600 text-sm italic mb-4">"মাইক্রো জর্জেট শাড়িটার ফেব্রিক কোয়ালিটি অসাধারণ ছিল। স্টোনের কাজগুলো নিখুঁত এবং ৫ ইঞ্চি দূরত্বের প্যাটার্নটা দারুণ লাক্সারি লুক দিচ্ছে।"</p>
                             <h4 class="font-bold text-gray-900 text-sm">- মেহজাবিন আক্তার, ঢাকা</h4>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                            <div class="flex text-amber-400 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                            <p class="text-gray-600 text-sm italic mb-4">"অर्डर করার পর খুব দ্রুত ডেলিভারি পেয়েছি। থ্রি-পিসের কাপড়টা অনেক আরামদায়ক এবং কালার একদম ছবির মতোই নিখুঁত ছিল।"</p>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="flex text-amber-500 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            <p class="text-gray-600 text-sm italic mb-4">"অর্ডার করার পর খুব দ্রুত ডেলিভারি পেয়েছি। থ্রি-পিসের কাপড়টা অনেক আরামদায়ক এবং কালার একদম ছবির মতোই নিখুঁত ছিল।"</p>
                             <h4 class="font-bold text-gray-900 text-sm">- ফারহানা আহমেদ, চট্টগ্রাম</h4>
                         </div>
-                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                            <div class="flex text-amber-400 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="flex text-amber-500 gap-1 mb-3"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
                             <p class="text-gray-600 text-sm italic mb-4">"হোয়াটসঅ্যাপের মাধ্যমে অর্ডার করার সুবিধাটা দারুণ। কাস্টমার সাপোর্টের রেসপন্স খুব ভালো ছিল। বেস্ট অফ লাক এম এস ফ্যাশন।"</p>
                             <h4 class="font-bold text-gray-900 text-sm">- সাদিয়া সুলতানা, সিলেট</h4>
                         </div>
@@ -233,22 +244,22 @@
             </section>
         </main>
 
-        <main x-show="selectedProduct" x-cloak class="container mx-auto px-4 py-8">
-            <button @click="closeProductView()" class="mb-6 flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-brand-pink smooth-transition">
+        <main x-show="currentView === 'user' && selectedProduct" class="container mx-auto px-4 py-8 animate-fade" x-cloak>
+            <button @click="closeProductView()" class="mb-6 flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-brand-pink smooth-transition bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
                 <i class="fa-solid fa-arrow-left"></i> গ্যালারিতে ফিরে যান
             </button>
 
             <template x-if="selectedProduct">
-                <div class="bg-white rounded-3xl p-4 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 border">
+                <div class="bg-white rounded-3xl p-4 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 border border-gray-100">
                     
                     <div class="space-y-4">
-                        <div class="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[3/4] zoom-effect border border-gray-100">
-                            <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover transition-transform duration-300">
+                        <div class="relative overflow-hidden rounded-2xl bg-gray-50 aspect-[3/4] zoom-effect border border-gray-100">
+                            <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover transition-all duration-300">
                         </div>
                         
                         <div class="flex gap-3 overflow-x-auto pb-2" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 1">
                             <template x-for="(img, idx) in selectedProduct.colors[activeColorIndex].images" :key="idx">
-                                <button @click="activeColorImage = img" class="w-20 h-24 rounded-lg overflow-hidden border-2 bg-gray-50 flex-shrink-0" :class="activeColorImage === img ? 'border-brand-pink' : 'border-transparent'">
+                                <button @click="activeColorImage = img" class="w-20 h-24 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 smooth-transition" :class="activeColorImage === img ? 'border-brand-pink shadow' : 'border-transparent'">
                                     <img :src="img" class="w-full h-full object-cover">
                                 </button>
                             </template>
@@ -258,23 +269,27 @@
                     <div class="flex flex-col justify-between">
                         <div>
                             <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase tracking-wider" x-text="selectedProduct.category === 'Saree' ? 'শাড়ি' : (selectedProduct.category === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></span>
-                            <h1 class="text-2xl md:text-4xl font-extrabold text-brand-dark mt-3" x-text="selectedProduct.name"></h1>
+                            <h1 class="text-2xl md:text-4xl font-extrabold text-brand-dark mt-3 leading-tight" x-text="selectedProduct.name"></h1>
                             
                             <div class="mt-4 flex items-center gap-4">
-                                <span class="text-3xl font-black text-brand-deepPink">৳ <span x-text="selectedProduct.price"></span></span>
-                                <span class="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full font-medium"><i class="fa-solid fa-circle-check"></i> ইন স্টক (ডেলিভারি রেডি)</span>
+                                <span class="text-3xl font-black text-brand-deepPink">৳<span x-text="selectedProduct.price"></span></span>
+                                <span class="text-xs text-green-600 bg-green-50 px-3 py-1 rounded-full font-bold border border-green-200"><i class="fa-solid fa-circle-check"></i> ইন স্টক (ডেলিভারি রেডি)</span>
                             </div>
 
-                            <div class="mt-6 border-t border-b border-gray-100 py-4">
-                                <h3 class="font-bold text-gray-900 mb-1 text-sm">পণ্যের বিবরণ:</h3>
-                                <p class="text-gray-600 text-sm leading-relaxed" x-text="selectedProduct.description"></p>
+                            <div class="mt-6 border-t border-b border-gray-100 py-4 space-y-3">
+                                <div>
+                                    <h3 class="font-bold text-gray-900 mb-1 text-sm">পণ্যের বিবরণ:</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed" x-text="selectedProduct.description"></p>
+                                </div>
                                 
-                                <h3 class="font-bold text-gray-900 mb-1 mt-3 text-sm">স্পেসিফিকেশন ও মেটেরিয়াল:</h3>
-                                <ul class="text-gray-600 text-xs md:text-sm space-y-1 list-disc list-inside">
-                                    <template x-for="detail in selectedProduct.details">
-                                        <li x-text="detail"></li>
-                                    </template>
-                                </ul>
+                                <div>
+                                    <h3 class="font-bold text-gray-900 mb-1 text-sm">স্পেসিফিকেশন ও মেটেরিয়াল:</h3>
+                                    <ul class="text-gray-600 text-xs md:text-sm space-y-1 list-disc list-inside">
+                                        <template x-for="detail in selectedProduct.details">
+                                            <li x-text="detail"></li>
+                                        </template>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="mt-5" x-show="selectedProduct.colors && selectedProduct.colors.length > 0">
@@ -283,7 +298,7 @@
                                 </h3>
                                 <div class="flex flex-wrap gap-3">
                                     <template x-for="(color, index) in selectedProduct.colors" :key="index">
-                                        <button @click="selectColor(index, color)" class="group relative w-16 h-20 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 transition-all duration-200 shadow-sm" :class="activeColorIndex === index ? 'border-brand-deepPink ring-2 ring-brand-pink/30 scale-105' : 'border-gray-200 hover:border-brand-pink'">
+                                        <button @click="selectColor(index, color)" class="group relative w-16 h-20 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 transition-all duration-200 shadow-sm" :class="activeColorIndex === index ? 'border-brand-deepPink ring-4 ring-pink-100 scale-105' : 'border-gray-200 hover:border-brand-pink'">
                                             <img :src="color.images[0]" class="w-full h-full object-cover">
                                             <span class="absolute bottom-1 right-1 w-3 h-3 rounded-full border border-white shadow-sm" :style="`background-color: ${color.hex || '#ccc'}`"></span>
                                         </button>
@@ -291,53 +306,114 @@
                                 </div>
                             </div>
 
-                            <div class="mt-5 flex items-center gap-4">
-                                <span class="font-bold text-gray-900 text-xs">পরিমাণ (Quantity):</span>
-                                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white">
-                                    <button @click="if(orderQuantity > 1) orderQuantity--" class="px-2.5 py-0.5 bg-gray-100 font-bold hover:bg-gray-200 text-xs">-</button>
-                                    <span class="px-3 font-bold text-xs text-center" x-text="orderQuantity">1</span>
-                                    <button @click="orderQuantity++" class="px-2.5 py-0.5 bg-gray-100 font-bold hover:bg-gray-200 text-xs">+</button>
+                            <div class="mt-6 flex items-center gap-4 border-t pt-4">
+                                <div class="flex flex-col gap-1">
+                                    <span class="font-bold text-gray-900 text-xs">পরিমাণ (Quantity):</span>
+                                    <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm max-w-[120px]">
+                                        <button @click="if(orderQuantity > 1) orderQuantity--" class="px-3 py-2 bg-gray-50 font-bold hover:bg-gray-100 text-sm transition-colors">-</button>
+                                        <span class="px-4 font-bold text-sm text-center flex-grow" x-text="orderQuantity">1</span>
+                                        <button @click="orderQuantity++" class="px-3 py-2 bg-gray-50 font-bold hover:bg-gray-100 text-sm transition-colors">+</button>
+                                    </div>
+                                </div>
+                                <div class="flex-grow pt-4">
+                                    <button @click="addToCart()" class="w-full bg-brand-pink text-white font-bold py-3 rounded-xl text-sm hover:bg-brand-dark transition-all shadow-md shadow-pink-100 flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-cart-plus"></i> কার্টে যুক্ত করুন
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </template>
+        </main>
 
-                        <div class="mt-6 bg-gray-50 p-4 rounded-2xl border">
-                            <h3 class="font-bold text-xs text-brand-dark mb-3 border-b pb-2"><i class="fa-solid fa-shopping-bag text-brand-pink"></i> কাস্টমার ডেলিভারি ও পেমেন্ট ফর্ম</h3>
-                            <form @submit.prevent="submitStoreFormToGoogle()" class="space-y-3">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    <input type="text" x-model="checkoutForm.name" required placeholder="আপনার নাম লিখুন" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
-                                    <input type="tel" x-model="checkoutForm.phone" required placeholder="মোবাইল নম্বর" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
+        <main x-show="currentView === 'cart'" class="container mx-auto px-4 py-8 animate-fade" x-cloak>
+            <div class="max-w-4xl mx-auto">
+                <button @click="currentView = 'user'; selectedProduct = null;" class="mb-6 flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-brand-pink smooth-transition bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+                    <i class="fa-solid fa-arrow-left"></i> শপিং চালিয়ে যান
+                </button>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <div class="lg:col-span-2 space-y-4">
+                        <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                            <h2 class="text-xl font-black text-brand-dark mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-shopping-bag text-brand-pink"></i> শপিং কার্ট (<span x-text="getCartCount()"></span>)
+                            </h2>
+                            
+                            <div class="divide-y divide-gray-100">
+                                <template x-for="(item, idx) in cart" :key="idx">
+                                    <div class="py-4 flex gap-4 items-center justify-between">
+                                        <div class="flex items-center gap-3">
+                                            <img :src="item.image" class="w-16 h-20 object-cover rounded-xl border bg-gray-50">
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 text-sm md:text-base line-clamp-1" x-text="item.name"></h4>
+                                                <p class="text-xs text-brand-pink font-medium mt-0.5">কালার: <span x-text="item.colorName"></span></p>
+                                                <div class="flex items-center gap-2 mt-2">
+                                                    <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+                                                        <button @click="updateCartQuantity(idx, item.quantity - 1)" class="px-2 py-0.5 bg-gray-50 font-bold hover:bg-gray-100 text-xs">-</button>
+                                                        <span class="px-3 font-bold text-xs text-center" x-text="item.quantity">1</span>
+                                                        <button @click="updateCartQuantity(idx, item.quantity + 1)" class="px-2 py-0.5 bg-gray-50 font-bold hover:bg-gray-100 text-xs">+</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="font-black text-brand-deepPink text-sm md:text-lg block">৳<span x-text="item.price * item.quantity"></span></span>
+                                            <button @click="removeFromCart(idx)" class="text-gray-400 hover:text-red-500 text-xs mt-2 transition-colors"><i class="fa-solid fa-trash-can"></i> মুছে ফেলুন</button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <div x-show="cart.length === 0" class="text-center py-12">
+                                <i class="fa-solid fa-shopping-basket text-4xl text-gray-200 mb-2"></i>
+                                <p class="text-gray-400 text-sm">আপনার কার্টটি একদম খালি!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm sticky top-24">
+                            <h3 class="font-bold text-sm text-brand-dark mb-4 pb-2 border-b flex items-center gap-1">
+                                <i class="fa-solid fa-user-check text-brand-pink"></i> কাস্টমার ডেলিভারি ও পেমেন্ট
+                            </h3>
+                            
+                            <form @submit.prevent="submitStoreFormToGoogle()" class="space-y-4">
+                                <div class="space-y-2">
+                                    <input type="text" x-model="checkoutForm.name" required placeholder="আপনার নাম লিখুন" class="w-full border rounded-xl p-3 text-xs focus:ring-1 focus:ring-brand-pink focus:outline-none bg-gray-50">
+                                    <input type="tel" x-model="checkoutForm.phone" required placeholder="মোবাইল নম্বর" class="w-full border rounded-xl p-3 text-xs focus:ring-1 focus:ring-brand-pink focus:outline-none bg-gray-50">
+                                    <input type="text" x-model="checkoutForm.address" required placeholder="পূর্ণাঙ্গ ঠিকানা (গ্রাম/রোড, থানা, জেলা)" class="w-full border rounded-xl p-3 text-xs focus:ring-1 focus:ring-brand-pink focus:outline-none bg-gray-50">
                                 </div>
-                                <input type="text" x-model="checkoutForm.address" required placeholder="পূর্ণাঙ্গ ঠিকানা (গ্রাম/রোড, থানা, জেলা)" class="w-full border rounded-xl p-2.5 text-xs focus:outline-brand-pink bg-white">
                                 
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">ডেলিভারি এরিয়া সিলেক্ট করুন:</label>
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'inside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-bold text-gray-500">ডেলিভারি এরিয়া সিলেক্ট করুন:</label>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        <label class="border rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs transition-all" :class="checkoutForm.deliveryLocation === 'inside' ? 'border-brand-pink bg-pink-50/50 text-brand-deepPink font-bold' : 'bg-white text-gray-600'">
                                             <input type="radio" value="inside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
-                                            <span class="font-medium">ঢাকার ভেতরে (৳৮০)</span>
+                                            <span>ঢাকার ভেতরে (৳৮০)</span>
                                         </label>
-                                        <label class="border rounded-xl p-2 flex items-center gap-2 cursor-pointer text-xs bg-white" :class="checkoutForm.deliveryLocation === 'outside' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'text-gray-600'">
+                                        <label class="border rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs transition-all" :class="checkoutForm.deliveryLocation === 'outside' ? 'border-brand-pink bg-pink-50/50 text-brand-deepPink font-bold' : 'bg-white text-gray-600'">
                                             <input type="radio" value="outside" x-model="checkoutForm.deliveryLocation" class="accent-brand-pink">
-                                            <span class="font-medium">ঢাকার বাইরে (৳১২০)</span>
+                                            <span>ঢাকার বাইরে (৳১৫০)</span>
                                         </label>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-500 mb-1">পেমেন্ট মেথড সিলেক্ট করুন:</label>
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'COD' ? 'border-brand-pink bg-pink-50 text-brand-deepPink' : 'bg-white text-gray-500'">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-bold text-gray-500">পেমেন্ট মেথড সিলেক্ট করুন:</label>
+                                    <div class="grid grid-cols-3 gap-1.5">
+                                        <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center text-xs smooth-transition" :class="checkoutForm.payment === 'COD' ? 'border-brand-pink bg-pink-50 text-brand-deepPink font-bold shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'">
                                             <input type="radio" value="COD" x-model="checkoutForm.payment" class="hidden">
-                                            <i class="fa-solid fa-truck mb-0.5 text-xs"></i>
-                                            <span class="text-[9px] font-bold">ক্যাশ অন ডেলিভারি</span>
+                                            <i class="fa-solid fa-truck mb-1 text-xs"></i>
+                                            <span class="text-[9px] leading-tight">ক্যাশ অন</span>
                                         </label>
-                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'bKash' ? 'border-pink-500 bg-pink-100 text-pink-700' : 'bg-white text-gray-500'">
+                                        <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center text-xs smooth-transition" :class="checkoutForm.payment === 'bKash' ? 'border-pink-500 bg-pink-100 text-pink-700 font-bold shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'">
                                             <input type="radio" value="bKash" x-model="checkoutForm.payment" class="hidden">
                                             <span class="font-black mb-0.5 text-xs">বিকাশ</span>
                                             <span class="text-[8px]">পার্সোনাল</span>
                                         </label>
-                                        <label class="border rounded-xl p-1.5 flex flex-col items-center justify-center cursor-pointer text-center text-xs" :class="checkoutForm.payment === 'Nagad' ? 'border-orange-500 bg-orange-100 text-orange-700' : 'bg-white text-gray-500'">
+                                        <label class="border rounded-xl p-2 flex flex-col items-center justify-center cursor-pointer text-center text-xs smooth-transition" :class="checkoutForm.payment === 'Nagad' ? 'border-orange-500 bg-orange-100 text-orange-700 font-bold shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'">
                                             <input type="radio" value="Nagad" x-model="checkoutForm.payment" class="hidden">
                                             <span class="font-black mb-0.5 text-xs">নগদ</span>
                                             <span class="text-[8px]">পার্সোনাল</span>
@@ -345,44 +421,44 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-pink-50 border border-pink-200 p-2.5 rounded-xl text-xs" x-show="checkoutForm.payment === 'bKash'" x-cloak>
-                                    <p class="font-bold text-pink-800">📱 বিকাশ পার্সোনাল: <span class="underline">01906109839</span></p>
-                                    <input type="text" x-model="checkoutForm.trxId" placeholder="টাকা সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-pink-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                <div class="bg-pink-50 border border-pink-200 p-3 rounded-xl text-xs" x-show="checkoutForm.payment === 'bKash'" x-cloak>
+                                    <p class="font-bold text-pink-800 flex items-center gap-1">📱 বিকাশ পার্সোনাল: <span class="underline">01906109839</span></p>
+                                    <input type="text" x-model="checkoutForm.trxId" placeholder="টাকা সেন্ড মানি করে TrxID লিখুন" class="w-full mt-2 border border-pink-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
                                 </div>
 
-                                <div class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl text-xs" x-show="checkoutForm.payment === 'Nagad'" x-cloak>
-                                    <p class="font-bold text-orange-800">📱 নগদ পার্সোনাল: <span class="underline">01906109839</span></p>
-                                    <input type="text" x-model="checkoutForm.trxId" placeholder="সেন্ড মানি করে TrxID এখানে লিখুন" class="w-full mt-1 border border-orange-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
+                                <div class="bg-orange-50 border border-orange-200 p-3 rounded-xl text-xs" x-show="checkoutForm.payment === 'Nagad'" x-cloak>
+                                    <p class="font-bold text-orange-800 flex items-center gap-1">📱 নগদ পার্সোনাল: <span class="underline">01906109839</span></p>
+                                    <input type="text" x-model="checkoutForm.trxId" placeholder="সেন্ড মানি করে TrxID লিখুন" class="w-full mt-2 border border-orange-200 rounded-lg p-2 text-xs bg-white focus:outline-none">
                                 </div>
 
-                                <div class="bg-white p-3 rounded-xl border text-xs space-y-1.5">
+                                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-xs space-y-2 shadow-inner">
                                     <div class="flex justify-between text-gray-600">
-                                        <span>প্রোডাক্টের মূল্য:</span>
-                                        <span>৳<span x-text="selectedProduct.price * orderQuantity"></span></span>
+                                        <span>প্রোডাক্টের উপ-মোট:</span>
+                                        <span>৳<span x-text="getCartSubtotal()"></span></span>
                                     </div>
                                     <div class="flex justify-between text-gray-600">
                                         <span>ডেলিভারি চার্জ:</span>
                                         <span x-text="calculateDeliveryCharge() === 0 ? 'ফ্রি (৩টি অফার)' : '৳' + calculateDeliveryCharge()"></span>
                                     </div>
-                                    <div class="flex justify-between font-bold text-brand-dark border-t pt-1.5 text-sm">
+                                    <div class="flex justify-between font-black text-brand-dark border-t pt-2 text-sm">
                                         <span>সর্বমোট প্রদেয়:</span>
-                                        <span>৳<span x-text="(selectedProduct.price * orderQuantity) + calculateDeliveryCharge()"></span></span>
+                                        <span class="text-brand-deepPink">৳<span x-text="getCartGrandTotal()"></span></span>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-2 pt-1">
-                                    <button type="submit" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl text-xs hover:bg-brand-pink transition-all shadow-md">
+                                <div class="grid grid-cols-1 gap-2 pt-1">
+                                    <button type="submit" :disabled="cart.length === 0" class="w-full bg-brand-dark text-white font-bold py-3.5 rounded-xl text-xs hover:bg-brand-pink transition-all shadow-md disabled:opacity-50 disabled:pointer-events-none">
                                         <i class="fa-solid fa-bolt mr-1"></i> অর্ডার সম্পন্ন করুন
                                     </button>
-                                    <button type="button" @click="sendToWhatsAppDirectAction()" class="w-full bg-[#25D366] text-white font-bold py-3.5 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-md">
-                                        <i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp অর্ডার
+                                    <button type="button" :disabled="cart.length === 0" @click="sendToWhatsAppDirectAction()" class="w-full bg-[#25D366] text-white font-bold py-3.5 rounded-xl text-xs hover:bg-emerald-600 transition-all shadow-md flex items-center justify-center gap-1 disabled:opacity-50 disabled:pointer-events-none">
+                                        <i class="fa-brands fa-whatsapp"></i> WhatsApp অর্ডার
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
-            </template>
+            </div>
         </main>
 
         <footer class="bg-brand-dark text-gray-400 pt-12 pb-6 border-t-4 border-brand-pink mt-12">
@@ -393,9 +469,9 @@
                 </div>
                 <div class="space-y-2">
                     <h4 class="text-white font-bold text-sm uppercase tracking-wider">পণ্যসমূহ</h4>
-                    <a href="#" @click="selectedCategory = 'Saree'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">প্রিমিয়াম শাড়ি কালেকশন</a>
-                    <a href="#" @click="selectedCategory = 'Three Piece'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">এক্সক্লুসিভ থ্রি-পিস</a>
-                    <a href="#" @click="selectedCategory = 'Two Piece'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">ট্রেন্ডি টু-পিস</a>
+                    <a href="#" @click="selectedCategory = 'Saree'; currentView = 'user'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">প্রিমিয়াম শাড়ি কালেকশন</a>
+                    <a href="#" @click="selectedCategory = 'Three Piece'; currentView = 'user'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">এক্সক্লুসিভ থ্রি-পিস</a>
+                    <a href="#" @click="selectedCategory = 'Two Piece'; currentView = 'user'; scrollToProducts()" class="block hover:text-brand-pink transition-colors">ট্রেন্ডি টু-পিস</a>
                 </div>
                 <div class="space-y-3">
                     <h4 class="text-white font-bold text-sm uppercase tracking-wider">যোগাযোগ ও হেল্পলাইন</h4>
@@ -409,19 +485,22 @@
         </footer>
     </div>
 
-    <main x-show="currentView === 'admin'" class="container mx-auto px-4 py-8 max-w-lg" x-cloak>
-        <div class="bg-white rounded-3xl p-6 shadow-xl border">
-            <h2 class="text-base font-black text-brand-dark mb-4 pb-2 border-b"><i class="fa-solid fa-cloud-upload-alt text-brand-pink mr-1"></i> নো-কোড প্রোডাক্ট আপলোডার ড্যাশবোর্ড</h2>
+    <main x-show="currentView === 'admin'" class="container mx-auto px-4 py-8 max-w-lg animate-fade" x-cloak>
+        <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                <h2 class="text-base font-black text-brand-dark flex items-center gap-1"><i class="fa-solid fa-cloud-upload-alt text-brand-pink"></i> অ্যাডমিন আপলোডার ড্যাশবোর্ড</h2>
+                <button @click="currentView = 'user'" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
             
             <form @submit.prevent="publishNewProductFormSubmit()" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-bold text-gray-700 mb-1">প্রোডাক্টের নাম *</label>
-                    <input type="text" x-model="adminNewProd.name" required placeholder="যেমন: সুতি বুটিক টু পিস কালেকশন" class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                    <input type="text" x-model="adminNewProd.name" required placeholder="যেমন: সুতি বুটিক টু পিস কালেকশন" class="w-full border rounded-xl p-2.5 focus:ring-1 focus:ring-brand-pink bg-gray-50 border-gray-200 outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block font-bold text-gray-700 mb-1">ক্যাটাগরি সিলেক্ট করুন *</label>
-                        <select x-model="adminNewProd.category" class="w-full border rounded-xl p-2.5 bg-white focus:outline-brand-pink">
+                        <select x-model="adminNewProd.category" class="w-full border rounded-xl p-2.5 bg-white focus:ring-1 focus:ring-brand-pink border-gray-200 outline-none">
                             <option value="Saree">Saree (শাড়ি)</option>
                             <option value="Three Piece">Three Piece (থ্রি পিস)</option>
                             <option value="Two Piece">Two Piece (টু পিস)</option>
@@ -429,21 +508,21 @@
                     </div>
                     <div>
                         <label class="block font-bold text-gray-700 mb-1">মূল্য (৳) *</label>
-                        <input type="number" x-model="adminNewProd.price" required placeholder="দাম লিখুন" class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                        <input type="number" x-model="adminNewProd.price" required placeholder="দাম লিখুন" class="w-full border rounded-xl p-2.5 focus:ring-1 focus:ring-brand-pink bg-gray-50 border-gray-200 outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block font-bold text-gray-700 mb-1">মেইন কভার ছবির অনলাইন লিংক *</label>
-                    <input type="url" x-model="adminNewProd.mainImage" required placeholder="https://i.ibb.co.com/..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
+                    <input type="url" x-model="adminNewProd.mainImage" required placeholder="https://i.ibb.co.com/..." class="w-full border rounded-xl p-2.5 focus:ring-1 focus:ring-brand-pink bg-gray-50 border-gray-200 outline-none">
                     <p class="text-[10px] text-gray-400 mt-1">💡 আপনার ছবি <a href="https://imgbb.com" target="_blank" class="text-brand-pink underline">ImgBB.com</a> এ আপলোড করে <b>Direct Link</b> দিন।</p>
                 </div>
                 
-                <div class="border p-3 rounded-xl bg-gray-50 space-y-2">
+                <div class="border border-gray-200 p-3 rounded-xl bg-gray-50 space-y-2">
                     <label class="block font-bold text-gray-700">কালার ভ্যারিয়েন্ট ও ইমেজ অ্যাড করুন (ঐচ্ছিক):</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <input type="text" x-model="tempColorName" @input="autoMatchColorHex()" placeholder="নাম (যেমন: মেরুন, কালো, লাল)" class="border rounded-lg p-2 text-xs bg-white focus:outline-none">
-                        <input type="url" x-model="tempColorLink" placeholder="ছবির ডাইরেক্ট লিংক" class="border rounded-lg p-2 text-xs bg-white focus:outline-none col-span-1">
-                        <div class="flex items-center gap-1 bg-white border rounded-lg px-2">
+                        <input type="text" x-model="tempColorName" @input="autoMatchColorHex()" placeholder="নাম (যেমন: মেরুন, কালো)" class="border rounded-lg p-2 text-xs bg-white focus:outline-none border-gray-200">
+                        <input type="url" x-model="tempColorLink" placeholder="ছবির ডাইরেক্ট লিংক" class="border rounded-lg p-2 text-xs bg-white focus:outline-none col-span-1 border-gray-200">
+                        <div class="flex items-center gap-1 bg-white border rounded-lg px-2 border-gray-200">
                             <span class="text-[10px] text-gray-400 whitespace-nowrap">বৃত্তের রঙ:</span>
                             <input type="color" x-model="tempColorHex" class="w-full h-7 border-none bg-transparent cursor-pointer">
                         </div>
@@ -462,13 +541,12 @@
 
                 <div>
                     <label class="block font-bold text-gray-700 mb-1">পণ্যের শর্ট ডেসক্রিপশন</label>
-                    <textarea x-model="adminNewProd.description" rows="2" placeholder="ম্যাটেরিয়াল বা সুতার কাজের মূল হাইলাইট..." class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50"></textarea>
+                    <textarea x-model="adminNewProd.description" rows="2" placeholder="ম্যাটেরিয়াল বা সুতার কাজের মূল হাইলাইট..." class="w-full border rounded-xl p-2.5 focus:ring-1 focus:ring-brand-pink bg-gray-50 border-gray-200 outline-none"></textarea>
                 </div>
 
                 <div>
                     <label class="block font-bold text-gray-700 mb-1">স্পেসিফিকেশন / বুলেট পয়েন্টস (কমা দিয়ে আলাদা করুন)</label>
-                    <input type="text" x-model="adminNewProd.rawDetails" placeholder="যেমন: ফেব্রিক: পিওর সিল্ক, ওড়না: ৫ হাত নামাজি, লেস: থিন এম্ব্রয়ডারি" class="w-full border rounded-xl p-2.5 focus:outline-brand-pink bg-gray-50">
-                    <p class="text-[10px] text-gray-400 mt-1">💡 প্রতিটি পয়েন্ট কমা (,) দিয়ে আলাদা করে লিখলে তা লিস্ট আকারে ডেসক্রিপশনের নিচে দেখাবে।</p>
+                    <input type="text" x-model="adminNewProd.rawDetails" placeholder="যেমন: ফেব্রিক: পিওর সিল্ক, ওড়না: ৫ হাত" class="w-full border rounded-xl p-2.5 focus:ring-1 focus:ring-brand-pink bg-gray-50 border-gray-200 outline-none">
                 </div>
 
                 <button type="submit" class="w-full bg-brand-deepPink text-white font-bold py-3 rounded-xl shadow-md hover:bg-brand-dark transition-all">
@@ -477,11 +555,11 @@
             </form>
         </div>
 
-        <div class="bg-white rounded-3xl p-6 shadow-xl border mt-6">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100 mt-6">
             <h3 class="font-bold text-xs text-gray-500 mb-3">মোট আপলোড করা প্রোডাক্ট তালিকা (<span x-text="products.length"></span>)</h3>
             <div class="space-y-2">
-                <template x-for="	(p, idx) in products" :key="p.id">
-                    <div class="flex items-center justify-between bg-gray-50 p-2 rounded-xl border text-xs">
+                <template x-for="(p, idx) in products" :key="p.id">
+                    <div class="flex items-center justify-between bg-gray-50 p-2 rounded-xl border text-xs border-gray-200">
                         <div class="flex items-center gap-2">
                             <img :src="p.colors && p.colors[0] ? p.colors[0].images[0] : 'https://via.placeholder.com/100'" class="w-8 h-8 object-cover rounded-lg">
                             <div>
@@ -511,9 +589,17 @@
                 orderQuantity: 1,
                 cart: [],
 
+                // স্লাইডার প্রোপার্টিজ
+                activeSlide: 0,
+                slides: [
+                    { title: "এক্সক্লুসিভ লাক্সারি শাড়ি", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80" },
+                    { title: "প্রিমিয়াম ডিজাইনার থ্রি-পিস", image: "https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=1200&q=80" },
+                    { title: "ট্রেন্ডি ক্লাসি টু-পিস কালেকশন", image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=1200&q=80" }
+                ],
+
                 tempColorName: '',
                 tempColorLink: '',
-                tempColorHex: '#ec4899',
+                tempColorHex: '#db2777',
                 adminNewProd: { id: '', name: '', category: 'Saree', price: '', mainImage: '', description: '', rawDetails: '', colors: [] },
 
                 checkoutForm: {
@@ -528,6 +614,11 @@
                 products: [],
 
                 initStore() {
+                    // স্লাইডার অটো রান লজিক
+                    setInterval(() => {
+                        this.activeSlide = (this.activeSlide + 1) % this.slides.length;
+                    }, 4000);
+
                     const savedDB = localStorage.getItem('ms_fashion_master_db');
                     if (savedDB) {
                         this.products = JSON.parse(savedDB);
@@ -570,19 +661,82 @@
                         ];
                         localStorage.setItem('ms_fashion_master_db', JSON.stringify(this.products));
                     }
+
+                    // কার্ট রিলোড
+                    const savedCart = localStorage.getItem('ms_fashion_cart');
+                    if (savedCart) {
+                        this.cart = JSON.parse(savedCart);
+                    }
                 },
 
-                toggleAdminView() {
-                    if (this.currentView === 'user') {
+                // কীবোর্ড শর্টকাট মেকানিজম (Ctrl + Alt + A)
+                handleAdminShortcut(event) {
+                    if (event.ctrlKey && event.altKey && (event.key === 'a' || event.key === 'A')) {
+                        event.preventDefault();
                         const securePinCode = prompt("MS Fashion Store সিকিউরিটি পিন কোডটি লিখুন:");
                         if (securePinCode === "2026") {
                             this.currentView = 'admin';
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
                         } else if (securePinCode !== null) {
-                            alert("ভুল পিন কোড! আপনি অ্যাডমিন প্যানেল ব্যবহার করার অনুমতি পাননি।");
+                            alert("ভুল পিন কোড! অ্যাক্সেস ডিনাইড।");
                         }
-                    } else {
-                        this.currentView = 'user';
                     }
+                },
+
+                // মাল্টি-কালার কার্ট ফাংশনালিটি
+                addToCart() {
+                    const cartItem = {
+                        productId: this.selectedProduct.id,
+                        name: this.selectedProduct.name,
+                        price: this.selectedProduct.price,
+                        colorName: this.activeColorName,
+                        image: this.activeColorImage,
+                        quantity: this.orderQuantity
+                    };
+
+                    // একই প্রোডাক্টের একই কালার থাকলে কোয়ান্টিটি বাড়িয়ে দেবে
+                    const existingIndex = this.cart.findIndex(item => item.productId === cartItem.productId && item.colorName === cartItem.colorName);
+                    
+                    if (existingIndex > -1) {
+                        this.cart[existingIndex].quantity += this.orderQuantity;
+                    } else {
+                        this.cart.push(cartItem);
+                    }
+
+                    localStorage.setItem('ms_fashion_cart', JSON.stringify(this.cart));
+                    alert(`🎉 "${cartItem.colorName}" কালারটি সফলভাবে শপিং কার্টে যোগ করা হয়েছে!`);
+                    this.selectedProduct = null;
+                    this.currentView = 'cart';
+                },
+
+                removeFromCart(idx) {
+                    this.cart.splice(idx, 1);
+                    localStorage.setItem('ms_fashion_cart', JSON.stringify(this.cart));
+                },
+
+                updateCartQuantity(idx, newQty) {
+                    if (newQty < 1) return;
+                    this.cart[idx].quantity = newQty;
+                    localStorage.setItem('ms_fashion_cart', JSON.stringify(this.cart));
+                },
+
+                getCartCount() {
+                    return this.cart.reduce((total, item) => total + item.quantity, 0);
+                },
+
+                getCartSubtotal() {
+                    return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+                },
+
+                calculateDeliveryCharge() {
+                    if (this.cart.length === 0) return 0;
+                    const totalQty = this.getCartCount();
+                    if (totalQty >= 3) return 0; // ৩টি বা তার বেশি হলে ফ্রি ডেলিভারি
+                    return this.checkoutForm.deliveryLocation === 'inside' ? 80 : 120;
+                },
+
+                getCartGrandTotal() {
+                    return this.getCartSubtotal() + this.calculateDeliveryCharge();
                 },
 
                 viewProduct(product) {
@@ -591,7 +745,6 @@
                     this.activeColorImage = product.colors && product.colors[0] ? product.colors[0].images[0] : '';
                     this.activeColorName = product.colors && product.colors[0] ? product.colors[0].name : 'Default';
                     this.orderQuantity = 1;
-                    this.checkoutForm = { name: '', phone: '', address: '', payment: 'COD', trxId: '', deliveryLocation: 'inside' };
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
 
@@ -636,35 +789,18 @@
                     return items;
                 },
 
-                calculateDeliveryCharge() {
-                    if (this.orderQuantity >= 3) {
-                        return 0;
-                    }
-                    return this.checkoutForm.deliveryLocation === 'inside' ? 80 : 120;
-                },
-
-                // আপডেট ফিচার: কালারের নাম লিখলে অটোমেটিক কালার কোড (Hex) ধরে নেবে
                 autoMatchColorHex() {
                     const text = this.tempColorName.trim().toLowerCase();
-                    
-                    // বাংলা ও ইংরেজি নামের কালার ডিকশনারি ম্যাপ
                     const colorMap = {
                         'মেরুন': '#800000', 'maroon': '#800000',
                         'কালো': '#000000', 'black': '#000000',
                         'লাল': '#FF0000', 'red': '#FF0000',
-                        'রানি পিংক': '#FF1493', 'rani pink': '#FF1493', 'pink': '#FF69B4', 'গোলাপী': '#FF69B4',
-                        'রয়্যাল ব্লু': '#4169E1', 'royal blue': '#4169E1', 'নীল': '#0000FF', 'blue': '#0000FF',
+                        'রানি পিংক': '#FF1493', 'rani pink': '#FF1493', 'pink': '#FF69B4',
+                        'রয়্যাল ব্লু': '#4169E1', 'royal blue': '#4169E1', 'blue': '#0000FF',
                         'নেভি ব্লু': '#000080', 'navy blue': '#000080',
-                        'জ্যাম': '#4A0E17', 'jam': '#4A0E17', 'জাম': '#4A0E17',
-                        'লেভেন্ডার': '#E6E6FA', 'lavender': '#E6E6FA',
-                        'হলুদ': '#FFFF00', 'yellow': '#FFFF00',
-                        'সবুজ': '#008000', 'green': '#008000',
-                        'সাদা': '#FFFFFF', 'white': '#FFFFFF',
-                        'কমলা': '#FFA500', 'orange': '#FFA500',
-                        'বেগুনি': '#800080', 'purple': '#800080'
+                        'জ্যাম': '#4A0E17', 'jam': '#4A0E17',
+                        'হলুদ': '#FFFF00', 'yellow': '#FFFF00'
                     };
-
-                    // যদি ডিকশনারির কোনো নামের সাথে ম্যাচ খুঁজে পায় তবে সেট করবে
                     for (let key in colorMap) {
                         if (text.includes(key)) {
                             this.tempColorHex = colorMap[key];
@@ -682,7 +818,7 @@
                         });
                         this.tempColorName = '';
                         this.tempColorLink = '';
-                        this.tempColorHex = '#ec4899';
+                        this.tempColorHex = '#db2777';
                     } else {
                         alert('দয়া করে কালার ভ্যারিয়েন্টের নাম ও ছবির লিংক টাইপ করুন।');
                     }
@@ -690,11 +826,10 @@
 
                 publishNewProductFormSubmit() {
                     let finalColors = [];
-                    
                     if (this.adminNewProd.colors.length === 0) {
                         finalColors.push({
                             name: "স্ট্যান্ডার্ড (Default)",
-                            hex: "#ec4899",
+                            hex: "#db2777",
                             images: [this.adminNewProd.mainImage]
                         });
                     } else {
@@ -702,13 +837,13 @@
                         if (this.adminNewProd.mainImage && finalColors[0].images[0] !== this.adminNewProd.mainImage) {
                             finalColors.unshift({
                                 name: "প্রধান কভার (Main)",
-                                hex: "#ec4899",
+                                hex: "#db2777",
                                 images: [this.adminNewProd.mainImage]
                             });
                         }
                     }
 
-                    let bulletSpecs = ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন গর্জিয়াস লাক্সারি আউটলুক", "কালেকশন: এক্সক্লুসিভ ফ্যাশন ২০২৬"];
+                    let bulletSpecs = ["মেটেরিয়াল: প্রিমিয়াম কোয়ালিটি ফেব্রিক", "স্টাইল: মডার্ন গর্জিয়াস লাক্সারি আউটলুক"];
                     if (this.adminNewProd.rawDetails && this.adminNewProd.rawDetails.trim() !== '') {
                         bulletSpecs = this.adminNewProd.rawDetails.split(',').map(item => item.trim()).filter(item => item !== '');
                     }
@@ -739,73 +874,79 @@
                 },
 
                 submitStoreFormToGoogle() {
-                    if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
-                        alert("দয়া করে ফর্মের সব তথ্য সঠিকভাবে পূরণ করুন।");
+                    if (this.cart.length === 0) {
+                        alert("আপনার কার্ট খালি রয়েছে।");
                         return;
                     }
 
                     const baseGoogleFormActionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScq3R-PQNXQNx5e8ns690sDtLk1p05vqXvnGQyaA26iZHxxyw/formResponse";
                     
                     const deliveryCharge = this.calculateDeliveryCharge();
-                    const productTotal = this.selectedProduct.price * this.orderQuantity;
-                    const finalGrandTotal = productTotal + deliveryCharge;
+                    const subtotal = this.getCartSubtotal();
+                    const finalGrandTotal = subtotal + deliveryCharge;
                     const areaText = this.checkoutForm.deliveryLocation === 'inside' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে';
+                    
+                    // সমস্ত আইটেমের বিবরণ তৈরি লুপ
+                    let productDetailsText = "";
+                    let itemLinksText = "";
+                    this.cart.forEach((item, index) => {
+                        productDetailsText += `[${index+1}] ${item.name} (${item.colorName}) x ${item.quantity}টি. `;
+                        itemLinksText += `${item.image} | `;
+                    });
 
                     const formBodyData = new URLSearchParams();
-                    formBodyData.append("entry.506007108", this.selectedProduct.name);
-                    formBodyData.append("entry.879137072", `নাম: ${this.checkoutForm.name} | কালার: ${this.activeColorName} | ফোন: ${this.checkoutForm.phone} | এরিয়া: ${areaText} | ঠিকানা: ${this.checkoutForm.address}`);
-                    formBodyData.append("entry.1004688583", `পরিমাণ: ${this.orderQuantity} টি |  ডেলিভারি চার্জ: ৳${deliveryCharge} | সর্বমোট বিল: ৳${finalGrandTotal} | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
+                    formBodyData.append("entry.506007108", productDetailsText);
+                    formBodyData.append("entry.879137072", `কাস্টমার: ${this.checkoutForm.name} | ফোন: ${this.checkoutForm.phone} | এরিয়া: ${areaText} | ঠিকানা: ${this.checkoutForm.address} | ইমেজ লিংকসমূহ: ${itemLinksText}`);
+                    formBodyData.append("entry.1004688583", `ডেলিভারি চার্জ: ৳${deliveryCharge} | সর্বমোট বিল: ৳${finalGrandTotal} | পেমেন্ট: ${this.checkoutForm.payment} | TrxID: ${this.checkoutForm.trxId || 'N/A'}`);
 
                     alert("🎉 প্রসেস হচ্ছে... দয়া করে সামান্য অপেক্ষা করুন।");
 
                     fetch(baseGoogleFormActionUrl, {
                         method: "POST",
                         mode: "no-cors",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
                         body: formBodyData.toString()
                     })
                     .then(() => {
-                        if (typeof fbq === 'function') {
-                            fbq('track', 'Purchase', {
-                                value: productTotal,
-                                currency: 'BDT',
-                                content_name: this.selectedProduct.name,
-                                content_type: 'product',
-                                num_items: this.orderQuantity
-                            });
-                        }
-
-                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সিস্টেমে সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
-                        this.selectedProduct = null;
+                        this.fireFacebookPurchasePixel(subtotal);
+                        alert("🎉 সফল হয়েছে! আপনার অর্ডারটি সাবমিট হয়েছে এবং গুগল শিটে ডেটা চলে গেছে।");
+                        this.clearCartAndReset();
                     })
-                    .catch((error) => {
-                        if (typeof fbq === 'function') {
-                            fbq('track', 'Purchase', {
-                                value: productTotal,
-                                currency: 'BDT',
-                                content_name: this.selectedProduct.name,
-                                content_type: 'product',
-                                num_items: this.orderQuantity
-                            });
-                        }
+                    .catch(() => {
+                        this.fireFacebookPurchasePixel(subtotal);
                         alert("🎉 ধন্যবাদ! আপনার অর্ডারটি সিস্টেমে রেজিস্টার হয়েছে।");
-                        this.selectedProduct = null;
+                        this.clearCartAndReset();
                     });
                 },
 
-                sendToWhatsAppDirectAction() {
-                    if (!this.checkoutForm.name || !this.checkoutForm.phone || !this.checkoutForm.address) {
-                        alert("WhatsApp-এ অর্ডার ডিটেইলস পাঠাতে ফর্মের তথ্যগুলো (নাম, ফোন, ঠিকানা) আগে লিখে নিন।");
-                        return;
+                fireFacebookPurchasePixel(subtotal) {
+                    if (typeof fbq === 'function') {
+                        fbq('track', 'Purchase', {
+                            value: subtotal,
+                            currency: 'BDT',
+                            content_type: 'product',
+                            num_items: this.getCartCount()
+                        });
                     }
+                },
+
+                clearCartAndReset() {
+                    this.cart = [];
+                    localStorage.removeItem('ms_fashion_cart');
+                    this.currentView = 'user';
+                },
+
+                sendToWhatsAppDirectAction() {
                     const deliveryCharge = this.calculateDeliveryCharge();
-                    const productTotal = this.selectedProduct.price * this.orderQuantity;
                     const areaText = this.checkoutForm.deliveryLocation === 'inside' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে';
                     const paymentMessageText = this.checkoutForm.payment === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.checkoutForm.payment} (TrxID: ${this.checkoutForm.trxId || 'নেই'})`;
                     
-                    const coreTemplateMessage = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে একটি অর্ডার করতে চাই:\n\n🛍️ প্রোডাক্ট: ${this.selectedProduct.name}\n🎨 সিলেক্টেড কালার: ${this.activeColorName}\n🔢 পরিমাণ: ${this.orderQuantity} টি\n📍 ডেলিভারি এরিয়া: ${areaText}\n🚚  ডেলিভারি চার্জ: ${deliveryCharge === 0 ? 'ফ্রি (অফার)' : '৳' + deliveryCharge}\n💰 সর্বমোট মূল্য: ৳${productTotal + deliveryCharge}\n💳 পেমেন্ট পদ্ধতি: ${paymentMessageText}\n\n👤 কাস্টমার নাম: ${this.checkoutForm.name}\n📱 ফোন নম্বর: ${this.checkoutForm.phone}\n📍 ঠিকানা: ${this.checkoutForm.address}`;
+                    let itemsSummary = "";
+                    this.cart.forEach((item, index) => {
+                        itemsSummary += `🛍️ [${index+1}] ${item.name}\n🎨 কালার: ${item.colorName}\n🔢 পরিমাণ: ${item.quantity} টি\n🖼️ ইমেজ: ${item.image}\n\n`;
+                    });
+                    
+                    const coreTemplateMessage = `হ্যালো MS Fashion Store,\nআমি ওয়েবসাইট থেকে অর্ডার করতে চাই:\n\n${itemsSummary}📍 এরিয়া: ${areaText}\n🚚 ডেলিভারি চার্জ: ${deliveryCharge === 0 ? 'ফ্রি (অফার)' : '৳' + deliveryCharge}\n💰 সর্বমোট মূল্য: ৳${this.getCartGrandTotal()}\n💳 পেমেন্ট পদ্ধতি: ${paymentMessageText}\n\n👤 নাম: ${this.checkoutForm.name}\n📱 ফোন নম্বর: ${this.checkoutForm.phone}\n📍 ঠিকানা: ${this.checkoutForm.address}`;
                     
                     const finalWhatsAppLinkGateway = `https://wa.me/8801906109839?text=${encodeURIComponent(coreTemplateMessage)}`;
                     window.open(finalWhatsAppLinkGateway, '_blank');
