@@ -169,18 +169,20 @@
                                 
                                 <!-- Select Variant Controls Matrix -->
                                 <div class="mt-6">
-                                    <h3 class="text-sm font-bold text-gray-900 mb-3">পছন্দের কালার ও পরিমাণ সিলেক্ট করুন:</h3>
+                                    <h3 class="text-sm font-bold text-gray-900 mb-3">পছন্দের কালার ও পরিমাণ সিলেক্ট করুন (ছবির ওপর ক্লিক করলেই সিলেক্ট হবে):</h3>
                                     <div class="grid grid-cols-1 gap-3">
                                         <template x-for="(col, index) in selectedProduct.colors" :key="index">
-                                            <div class="flex items-center justify-between border rounded-xl p-3 bg-gray-50 smooth-transition" :class="selectedVariants[col.colorName] > 0 ? 'border-brand-pink bg-pink-50/30' : 'border-gray-200'">
+                                            <!-- 🛠️ ছবি বা টেক্সটের ওপর ক্লিক করলেই অটো ১টি সিলেক্ট হওয়ার লজিক যোগ করা হয়েছে (@click="handleRowClick(...)") -->
+                                            <div @click="handleRowClick(col.colorName, index)" class="flex items-center justify-between border rounded-xl p-3 bg-gray-50 smooth-transition cursor-pointer hover:border-brand-pink" :class="selectedVariants[col.colorName] > 0 ? 'border-brand-pink bg-pink-50/30' : 'border-gray-200'">
                                                 <div class="flex items-center gap-3">
                                                     <img :src="col.images[0]" class="w-12 h-14 object-cover rounded-lg border">
                                                     <div>
                                                         <p class="font-bold text-gray-900 text-sm" x-text="col.colorName"></p>
-                                                        <p class="text-xs text-gray-400" x-text="selectedVariants[col.colorName] > 0 ? 'নির্বাচিত হয়েছে' : 'স্টকে আছে'"></p>
+                                                        <p class="text-xs text-gray-400" x-text="selectedVariants[col.colorName] > 0 ? 'নির্বাচিত হয়েছে' : 'স্টকে আছে (ক্লিক করুন)'"></p>
                                                     </div>
                                                 </div>
-                                                <div class="flex items-center gap-1.5 bg-white border rounded-lg p-1 shadow-sm">
+                                                <!-- প্লাস-মাইনাস বাটন এরিয়া (এখানকার ক্লিক ইভেন্টকে আলাদা রাখা হয়েছে @click.stop দিয়ে) -->
+                                                <div class="flex items-center gap-1.5 bg-white border rounded-lg p-1 shadow-sm" @click.stop>
                                                     <button @click="updateQty(col.colorName, -1, index)" class="w-8 h-8 rounded bg-gray-100 hover:bg-brand-pink hover:text-white flex items-center justify-center font-bold text-gray-600 smooth-transition">-</button>
                                                     <span class="w-8 text-center font-bold text-sm text-gray-900" x-text="selectedVariants[col.colorName] || 0"></span>
                                                     <button @click="updateQty(col.colorName, 1, index)" class="w-8 h-8 rounded bg-gray-100 hover:bg-brand-pink hover:text-white flex items-center justify-center font-bold text-gray-600 smooth-transition">+</button>
@@ -209,7 +211,7 @@
                                             <textarea x-model="orderForm.address" required rows="2" placeholder="গ্রাম/রোড, থানা, জেলা উল্লেখ করুন" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-pink focus:outline-none text-sm shadow-sm bg-white"></textarea>
                                         </div>
 
-                                        <!-- Delivery Selector -->
+                                        <!-- Delivery Area Selector -->
                                         <div>
                                             <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">ডেলিভারি এরিয়া সিলেক্ট করুন *</label>
                                             <div class="grid grid-cols-2 gap-2">
@@ -390,7 +392,7 @@
                     <div class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">প্রোডাক্টের নাম *</label>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">PROD_NAME *</label>
                                 <input type="text" x-model="newProduct.name" placeholder="যেমন: জর্জেট সুতি থ্রি পিস" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
                             </div>
                             <div>
@@ -404,7 +406,7 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">মূল্য (টাকা) *</label>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">PROD_PRICE (টাকা) *</label>
                                 <input type="number" x-model="newProduct.price" placeholder="যেমন: 1450" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
                             </div>
                             <div>
@@ -415,7 +417,7 @@
 
                         <!-- Variant Color Stack -->
                         <div class="border rounded-xl p-4 bg-gray-50/50">
-                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">প্রোডাক্ট কালার ভ্যারিয়েন্ট এবং ইমেজ</h4>
+                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">PROD_VARIANTS & Images</h4>
                             <div class="space-y-3">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
                                     <div class="md:col-span-1">
@@ -506,7 +508,7 @@
                 firebaseUrl: 'https://ms-fashion-store-1301a-default-rtdb.firebaseio.com/products.json',
                 whatsAppNumber: '8801906109839', // আপনার অফিসিয়াল হোয়াটসঅ্যাপ নাম্বার
                 
-                // 🚀 ১০০% ফিক্সড ৬টি কলামের প্রফেশনাল গুগল ফর্ম এন্ট্রি সেটিংস এবং রিয়েল অ্যাকশন ইউআরএল
+                // ১০০% ফিক্সড ৬টি কলামের প্রফেশনাল গুগল ফর্ম এন্ট্রি সেটিংস এবং রিয়েল অ্যাকশন ইউআরএল
                 googleFormActionUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfaPFnyb6wYItEH89Y9HHD1pSWLUCddcKLhg9jPaiUvfcuXLQ/formResponse',
                 entryCustomerName: 'entry.972618658',      // কলাম ১: Customer Name
                 entryMobileNumber: 'entry.1163029175',     // কলাম ২: Mobile Number
@@ -630,6 +632,19 @@
                     this.closeProductDetail();
                 },
 
+                // 🛠️ ইমেজের রও/কার্ড-এর ওপর ক্লিক করলেই অটোমেটিক ১টি সিলেক্ট করার কাস্টম ফাংশন
+                handleRowClick(colorName, idx) {
+                    this.activeColorIndex = idx;
+                    if (this.selectedProduct.colors && this.selectedProduct.colors[idx]) {
+                        this.activeColorImage = this.selectedProduct.colors[idx].images[0];
+                    }
+                    
+                    // যদি আগে থেকে ওই কালার সিলেক্ট করা না থাকে (অর্থাৎ ০ থাকে), তবে ক্লিক করার সাথে সাথে ১ করে দেবে
+                    if (!this.selectedVariants[colorName] || this.selectedVariants[colorName] === 0) {
+                        this.selectedVariants[colorName] = 1;
+                    }
+                },
+
                 updateQty(colorName, amount, idx) {
                     if (!this.selectedVariants[colorName]) this.selectedVariants[colorName] = 0;
                     let current = this.selectedVariants[colorName] + amount;
@@ -649,7 +664,7 @@
                 calculateDeliveryCharge() {
                     let totalQty = this.getTotalQty();
                     if (totalQty === 0) return 0;
-                    if (totalQty >= 3) return 0; // ৩টি আইটেম বা তার বেশি হলে ডেলিভারি ফ্রি
+                    if (totalQty >= 3) return 0;
                     return this.orderForm.deliveryLocation === 'inside' ? 70 : 120;
                 },
 
@@ -661,17 +676,30 @@
                     return this.calculateTotalProductPrice() + this.calculateDeliveryCharge();
                 },
 
-                // 🛠️ ৬টি কলামের আলাদা আলাদা ব্যাকএন্ড ডেটা সাবমিশন পাইপলাইন (স্টেডফাস্ট কুরিয়ার ফ্রেন্ডলি)
+                // ৬টি কলামের আলাদা আলাদা ব্যাকএন্ড ডেটা সাবমিশন পাইপলাইন (মাল্টিপল ইমেজ লিংক হ্যান্ডলার সহ)
                 async submitOrder() {
                     if (this.getTotalQty() === 0) return;
                     
                     let itemsSummary = [];
+                    let selectedImagesArray = [];
+                    
+                    // নির্বাচিত সব কালারের নাম এবং ইমেজ লিংক ট্র্যাক করা
                     Object.keys(this.selectedVariants).forEach(color => {
                         let qty = this.selectedVariants[color];
-                        if (qty > 0) { itemsSummary.push(`${color} (${qty}টি)`); }
+                        if (qty > 0) { 
+                            itemsSummary.push(`${color} (${qty}টি)`);
+                            
+                            // ফায়ারবেস থেকে এই ভ্যারিয়েন্টের প্রথম ইমেজ লিংকটি খুঁজে বের করা
+                            let foundCol = this.selectedProduct.colors.find(c => c.colorName === color);
+                            if (foundCol && foundCol.images && foundCol.images[0]) {
+                                selectedImagesArray.push(`${color}: ${foundCol.images[0]}`);
+                            }
+                        }
                     });
                     
                     let variantDetailsText = itemsSummary.join(', ');
+                    let allImagesCombinedText = selectedImagesArray.join(' , ');
+                    
                     let productTotal = this.calculateTotalProductPrice();
                     let deliveryCharge = this.calculateDeliveryCharge();
                     let grandTotal = this.calculateGrandTotal();
@@ -679,13 +707,14 @@
                     let areaText = this.orderForm.deliveryLocation === 'inside' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে';
                     let paymentInfoText = this.orderForm.paymentMethod === 'COD' ? 'ক্যাশ অন ডেলিভারি' : `${this.orderForm.paymentMethod} (Sender: ${this.orderForm.senderNumber}, TrxID: ${this.orderForm.trxId})`;
 
-                    // ৬টি কলামের ফরম্যাটেড ডেটা আলাদা আলাদা ভেরিয়েবলে অ্যালোকেশন করা হচ্ছে
                     let fieldName = this.orderForm.name;
                     let fieldPhone = this.orderForm.phone;
                     let fieldAddress = `এরিয়া: ${areaText} | পূর্ণাঙ্গ ঠিকানা: ${this.orderForm.address}`;
                     let fieldProdName = this.selectedProduct.name;
-                    let fieldVariants = `ভ্যারিয়েন্ট: ${variantDetailsText} | ইমেজ লিংক: ${this.activeColorImage}`;
-                    let fieldBilling = `পোশাকের দাম: ৳${productTotal} + ডেলিভারি চার্জ: ৳${deliveryCharge} = সর্বমোট বিল: ৳${grandTotal} | পেমেন্ট মেথড: ${paymentInfoText}`;
+                    
+                    // 🛠️ ভ্যারিয়েন্ট কলামের ভেতরে সব নির্বাচিত ইমেজের ডাইরেক্ট লিংক কমা দিয়ে পুশ করা হচ্ছে
+                    let fieldVariants = `ভ্যারিয়েন্ট: ${variantDetailsText} | নির্বাচিত ইমেজ সমূহের লিংক: [ ${allImagesCombinedText} ]`;
+                    let fieldBilling = `পোশাক: ৳${productTotal} + ডেলিভারি: ৳${deliveryCharge} = সর্বমোট বিল: ৳${grandTotal} | পেমেন্ট পদ্ধতি: ${paymentInfoText}`;
 
                     // Google Form Data Constructor Payload Pack
                     const formData = new FormData();
@@ -714,7 +743,7 @@
                     }
                 },
 
-                // WhatsApp Checkout Engine Integration
+                // WhatsApp Checkout Engine Integration (মাল্টিপল ইমেজ লিংক সাপোর্ট সহ)
                 submitToWhatsApp() {
                     if (this.getTotalQty() === 0) return;
                     if (!this.orderForm.name || !this.orderForm.phone || !this.orderForm.address) {
@@ -723,9 +752,18 @@
                     }
 
                     let itemsSummary = [];
+                    let selectedImagesArray = [];
+                    
                     Object.keys(this.selectedVariants).forEach(color => {
                         let qty = this.selectedVariants[color];
-                        if (qty > 0) { itemsSummary.push(`${color} (${qty}টি)`); }
+                        if (qty > 0) { 
+                            itemsSummary.push(`${color} (${qty}টি)`);
+                            
+                            let foundCol = this.selectedProduct.colors.find(c => c.colorName === color);
+                            if (foundCol && foundCol.images && foundCol.images[0]) {
+                                selectedImagesArray.push(`\n- ${color}: ${foundCol.images[0]}`);
+                            }
+                        }
                     });
                     
                     let variantDetailsText = itemsSummary.join(', ');
@@ -746,8 +784,8 @@
                     message += `*পোশাকের দাম:* ৳${productTotal}\n`;
                     message += `*ডেলিভারি চার্জ:* ${deliveryCharge === 0 ? 'ফ্রি (অফার!)' : '৳' + deliveryCharge}\n`;
                     message += `*সর্বমোট বিল:* ৳${grandTotal}\n\n`;
-                    message += `*পেমেন্ট পদ্ধতি:* ${paymentInfoText}\n`;
-                    message += `*প্রোডাক্ট ইমেজ:* ${this.activeColorImage}\n`;
+                    message += `*পেমেন্ট পদ্ধতি:* ${paymentInfoText}\n\n`;
+                    message += `*সিলেক্টেড ইমেজের লিংকসমূহ:* ${selectedImagesArray.join('')}\n`;
 
                     let encodedMessage = encodeURIComponent(message);
                     let whatsappUrl = `https://api.whatsapp.com/send?phone=${this.whatsAppNumber}&text=${encodedMessage}`;
