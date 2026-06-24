@@ -43,7 +43,9 @@
     <style>
         [x-cloak] { display: none !important; }
         .smooth-transition { transition: all 0.3s ease-in-out; }
-        .zoom-effect:hover img { transform: scale(1.08); }
+        /* Hide scrollbars but keep functionality */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="storeApp()" x-init="initStore()">
@@ -64,15 +66,13 @@
                 </a>
             </div>
             
-            <div class="hidden md:flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-2 w-1/3" x-show="currentView === 'user'">
+            <div class="flex items-center bg-gray-100 border border-gray-200 rounded-full px-4 py-2 w-full max-w-md mx-4 hidden md:flex" x-show="currentView === 'user'">
                 <input type="text" x-model="searchQuery" placeholder="শাড়ি, থ্রি-পিস খুঁজুন..." class="bg-transparent w-full focus:outline-none text-sm">
                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
             </div>
-
-            <div>
-                <button @click="currentView = 'admin'; adminAuthenticated = false;" class="text-gray-500 hover:text-brand-deepPink text-sm font-medium">
-                    <i class="fa-solid fa-lock-open mr-1"></i> এডমিন প্যানেল
-                </button>
+            
+            <div class="text-sm font-medium text-gray-600">
+                <i class="fa-solid fa-bolt text-brand-deepPink animate-pulse mr-1"></i> Fast Checkout
             </div>
         </div>
         
@@ -135,10 +135,10 @@
                 <template x-if="selectedProduct">
                     <div class="bg-white rounded-3xl p-4 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 border">
                         <div class="space-y-4">
-                            <div class="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[3/4] border border-gray-100">
+                            <div class="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[3/4] border border-gray-100 shadow-inner">
                                 <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover">
                             </div>
-                            <div class="flex gap-3 overflow-x-auto pb-2" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 1">
+                            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 1">
                                 <template x-for="(img, idx) in selectedProduct.colors[activeColorIndex].images" :key="idx">
                                     <button @click="activeColorImage = img" class="w-20 h-24 rounded-lg overflow-hidden border-2 bg-gray-50 flex-shrink-0" :class="activeColorImage === img ? 'border-brand-pink' : 'border-transparent'">
                                         <img :src="img" class="w-full h-full object-cover">
@@ -182,7 +182,7 @@
                             
                             <div class="mt-8 border-t pt-6">
                                 <div class="bg-gradient-to-br from-gray-50 to-pink-50/20 p-5 rounded-2xl border border-pink-100">
-                                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-2 mb-4"><i class="fa-solid fa-truck-ramp-box text-brand-deepPink"></i> অড্যারটি সম্পন্ন করতে আপনার তথ্য দিন</h3>
+                                    <h3 class="text-base font-bold text-gray-900 flex items-center gap-2 mb-4"><i class="fa-solid fa-truck-ramp-box text-brand-deepPink"></i> অর্ডারটি সম্পন্ন করতে আপনার তথ্য দিন</h3>
                                     <form @submit.prevent="submitOrder()" class="space-y-4">
                                         <div>
                                             <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">আপনার নাম *</label>
@@ -211,16 +211,25 @@
                 </template>
             </div>
 
-            <div x-show="!selectedProduct" class="mb-10 bg-gradient-to-r from-brand-dark to-gray-900 rounded-3xl p-6 md:p-12 text-white shadow-xl relative overflow-hidden">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,105,180,0.15),transparent_50%)]"></div>
-                <div class="relative z-10 max-w-2xl">
-                    <span class="bg-brand-deepPink/20 text-brand-pink border border-brand-pink/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest">Premium Collection</span>
-                    <h2 class="text-3xl md:text-5xl font-black mt-4 leading-tight">আভিজাত্য ও ঐতিহ্যের অনবদ্য মেলবন্ধন</h2>
-                    <p class="text-gray-300 mt-4 text-sm md:text-base leading-relaxed">এমএস ফ্যাশন স্টোরে আপনাকে স্বাগতম। আধুনিক ডিজাইনের সুনিপুণ কারুকার্যে তৈরি আমাদের প্রিমিয়াম শাড়ি ও এক্সক্লুসিভ থ্রি-পিস কালেকশন থেকে আজই বেছে নিন আপনার পছন্দের পোশাকটি।</p>
-                    <div class="mt-6 flex flex-wrap gap-4 text-xs font-semibold text-gray-200">
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-pink"></i> ১০০% প্রিমিয়াম কোয়ালিটি</span>
-                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-truck text-brand-pink"></i> দ্রুত ক্যাশ অন ডেলিভারি</span>
+            <div x-show="!selectedProduct" class="mb-10 relative rounded-3xl overflow-hidden shadow-lg aspect-[21/9] md:aspect-[25/9] bg-gray-200">
+                <template x-for="(slide, index) in bannerSlides" :key="index">
+                    <div x-show="activeSlide === index" 
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 transform scale-102"
+                         x-transition:enter-end="opacity-100 transform scale-100"
+                         class="absolute inset-0 w-full h-full">
+                        <img :src="slide.image" alt="Shopping Banner" class="w-full h-full object-cover">
+                        <div class="absolute bottom-4 left-4 md:bottom-8 md:left-8 bg-black/40 backdrop-blur-md text-white p-3 md:p-6 rounded-2xl max-w-xs md:max-w-md border border-white/10">
+                            <h3 class="text-sm md:text-2xl font-black tracking-wide" x-text="slide.title"></h3>
+                            <p class="text-[10px] md:text-xs text-gray-200 mt-1 hidden sm:block" x-text="slide.subtitle"></p>
+                        </div>
                     </div>
+                </template>
+                
+                <div class="absolute bottom-3 right-4 flex gap-1.5 z-20">
+                    <template x-for="(slide, index) in bannerSlides" :key="index">
+                        <button @click="activeSlide = index" class="w-2 h-2 rounded-full transition-all" :class="activeSlide === index ? 'bg-brand-deepPink w-4' : 'bg-white/60'"></button>
+                    </template>
                 </div>
             </div>
 
@@ -250,6 +259,31 @@
                             </div>
                         </div>
                     </template>
+                </div>
+            </div>
+
+            <div x-show="!selectedProduct" class="mt-16 border-t pt-10 mb-10">
+                <div class="text-center mb-8">
+                    <span class="text-xs text-brand-deepPink bg-pink-50 font-bold px-3 py-1 rounded-full uppercase tracking-wider">Happy Customers</span>
+                    <h2 class="text-xl md:text-3xl font-black text-gray-900 mt-2">সম্মানিত কাস্টমারদের রিভিউ ও মতামত</h2>
+                </div>
+                
+                <div class="max-w-lg mx-auto relative rounded-2xl overflow-hidden shadow border bg-white p-2 aspect-[4/5]">
+                    <template x-for="(review, idx) in reviewSlides" :key="idx">
+                        <div x-show="activeReviewSlide === idx"
+                             x-transition:enter="transition ease-in-out duration-500"
+                             x-transition:enter-start="opacity-0 transform translate-x-4"
+                             x-transition:enter-end="opacity-100 transform translate-x-0"
+                             class="absolute inset-0 w-full h-full p-2 flex items-center justify-center">
+                            <img :src="review.image" alt="Customer Review Screenshot" class="w-full h-full object-contain rounded-xl">
+                        </div>
+                    </template>
+                    
+                    <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20">
+                        <template x-for="(review, idx) in reviewSlides" :key="idx">
+                            <button @click="activeReviewSlide = idx" class="w-2 h-2 rounded-full transition-all" :class="activeReviewSlide === idx ? 'bg-brand-deepPink w-4' : 'bg-gray-300'"></button>
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -375,53 +409,67 @@
         </div>
     </main>
 
+    <footer class="bg-white border-t mt-20 py-6 text-center text-xs text-gray-500">
+        <div class="container mx-auto px-4 flex justify-between items-center max-w-7xl">
+            <div>&copy; 2026 MS Fashion Store. All Rights Reserved.</div>
+            <button @click="currentView = 'admin'; adminAuthenticated = false;" class="text-gray-300 hover:text-brand-pink transition-colors p-2">
+                <i class="fa-solid fa-user-gear text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
     <script>
         function storeApp() {
             return {
-                // Configs & Realtime Database Links
                 firebaseUrl: 'https://ms-fashion-store-1301a-default-rtdb.firebaseio.com/products.json',
                 
-                // Views States
+                // Banner Engine States (৪ সেকেন্ড পর পর অটো চেঞ্জ হবে)
+                activeSlide: 0,
+                bannerSlides: [
+                    { image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop', title: 'প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড', subtitle: 'ঐতিহ্য আর আধুনিকতার এক অনন্য কারুকাজ' },
+                    { image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ থ্রি পিস কালেকশন', subtitle: 'সবচেয়ে সেরা মেটেরিয়ালে তৈরি আরামদায়ক ও স্টাইলিশ পোশাক' },
+                    { image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1200&auto=format&fit=crop', title: 'নতুন শাড়ি লাঞ্চিং অফার', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
+                ],
+                
+                // Customer Review Screenshot Slides (এখানে আপনার স্ক্রিনশটের ইমেজ লিংকগুলো বসাবেন)
+                activeReviewSlide: 0,
+                reviewSlides: [
+                    { image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=500&auto=format&fit=crop' }, // আপনার রিভিউ স্ক্রিনশট লিংক ১
+                    { image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=500&auto=format&fit=crop' }, // আপনার রিভিউ স্ক্রিনশট লিংক ২
+                    { image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=500&auto=format&fit=crop' }  // আপনার রিভিউ স্ক্রিনশট লিংক ৩
+                ],
+                
                 currentView: 'user',
                 sidebarOpen: false,
                 selectedCategory: 'All',
                 searchQuery: '',
-                
-                // Inventory State arrays
                 products: [],
                 
-                // Single Product Deep Link View States
                 selectedProduct: null,
                 activeColorIndex: 0,
                 activeColorImage: '',
                 selectedVariants: {},
                 
-                // Order Processing Payload structure
-                orderForm: {
-                    name: '',
-                    phone: '',
-                    address: ''
-                },
+                orderForm: { name: '', phone: '', address: '' },
                 
-                // Administrative Security and Data Store Structures
                 adminAuthenticated: false,
                 adminPin: '',
-                newProduct: {
-                    name: '',
-                    category: 'Saree',
-                    price: '',
-                    description: '',
-                    colors: []
-                },
-                tempVariant: {
-                    colorName: '',
-                    imageUrls: ''
-                },
+                newProduct: { name: '', category: 'Saree', price: '', description: '', colors: [] },
+                tempVariant: { colorName: '', imageUrls: '' },
 
-                // Sync Core Engine with Google Firebase Realtime Server Node
                 async initStore() {
                     await this.fetchProducts();
                     this.checkDeepLinking();
+                    
+                    // Banner Automatic Rotator Interval Core (4s)
+                    setInterval(() => {
+                        this.activeSlide = (this.activeSlide + 1) % this.bannerSlides.length;
+                    }, 4000);
+
+                    // Review Automatic Rotator Interval Core (4.5s)
+                    setInterval(() => {
+                        this.activeReviewSlide = (this.activeReviewSlide + 1) % this.reviewSlides.length;
+                    }, 4500);
                 },
 
                 async fetchProducts() {
@@ -431,9 +479,7 @@
                         let loadedProducts = [];
                         if(data) {
                             Object.keys(data).forEach(key => {
-                                if(data[key]) {
-                                    loadedProducts.push({ id: key, ...data[key] });
-                                }
+                                if(data[key]) { loadedProducts.push({ id: key, ...data[key] }); }
                             });
                         }
                         this.products = loadedProducts;
@@ -442,16 +488,12 @@
                     }
                 },
 
-                // URL Parameter Processing Deep Linking Engine for Facebook Ads Boost
                 checkDeepLinking() {
                     const urlParams = new URLSearchParams(window.location.search);
                     const prodId = urlParams.get('product');
                     if (prodId) {
-                        // ডাটাবেজ থেকে নির্দিষ্ট প্রোডাক্টটি খুঁজে বের করা
                         const foundProduct = this.products.find(p => p.id === prodId);
-                        if (foundProduct) {
-                            this.openProductDetail(foundProduct);
-                        }
+                        if (foundProduct) { this.openProductDetail(foundProduct); }
                     }
                 },
 
@@ -469,23 +511,17 @@
                     this.activeColorImage = product.colors && product.colors[0] ? product.colors[0].images[0] : '';
                     this.selectedVariants = {};
                     
-                    // কালার ভ্যারিয়েন্ট ইনিশিয়ালাইজেশন
                     if (product.colors) {
-                        product.colors.forEach(c => {
-                            this.selectedVariants[c.colorName] = 0;
-                        });
+                        product.colors.forEach(c => { this.selectedVariants[c.colorName] = 0; });
                     }
                     
-                    // ব্রাউজারের এড্রেসবারে ইউআরএল পুশ করা (ফেসবুক এড রান করার সুবিধার জন্য)
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + product.id;
                     window.history.pushState({ path: newUrl }, '', newUrl);
-                    
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 },
 
                 closeProductDetail() {
                     this.selectedProduct = null;
-                    // ইউআরএল ক্লিয়ার করে আবার মেইন ডোমেইনে ফেরত আনা
                     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.pushState({ path: cleanUrl }, '', cleanUrl);
                 },
@@ -502,7 +538,6 @@
                     if (current < 0) current = 0;
                     this.selectedVariants[colorName] = current;
                     
-                    // অ্যাক্টিভ ভ্যারিয়েন্ট ইমেজ এবং ইন্ডেক্স আপডেট
                     this.activeColorIndex = idx;
                     if (this.selectedProduct.colors && this.selectedProduct.colors[idx]) {
                         this.activeColorImage = this.selectedProduct.colors[idx].images[0];
@@ -513,25 +548,19 @@
                     return Object.values(this.selectedVariants).reduce((a, b) => a + b, 0);
                 },
 
-                // Submit Orders Stream Payload to Google Sheet Forms Submissions Engine
                 async submitOrder() {
                     if (this.getTotalQty() === 0) return;
                     
-                    // নির্বাচিত আইটেম ও কালার কম্বিনেশন স্ট্রিং তৈরি
                     let itemsSummary = [];
                     Object.keys(this.selectedVariants).forEach(color => {
                         let qty = this.selectedVariants[color];
-                        if (qty > 0) {
-                            itemsSummary.push(`${color}: ${qty}টি`);
-                        }
+                        if (qty > 0) { itemsSummary.push(`${color}: ${qty}টি`); }
                     });
                     
                     let variantDetailsText = itemsSummary.join(', ');
                     let totalAmountCalculated = this.selectedProduct.price * this.getTotalQty();
 
-                    // গুগল ফর্ম ডাটা সোর্স সাবমিশন
                     const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfpv9Eby-NnAn7x_E502Bv6N4e_QonZ7gY06pEwRjofO685lA/formResponse";
-                    
                     const formData = new FormData();
                     formData.append("entry.1691238914", this.orderForm.name); 
                     formData.append("entry.1444216833", this.orderForm.phone); 
@@ -540,7 +569,6 @@
                     formData.append("entry.1447038167", variantDetailsText); 
                     formData.append("entry.2096339023", totalAmountCalculated); 
 
-                    // ফেসবুক পিক্সেল স্ট্যান্ডার্ড কমার্স ট্র্যাকিং ইভেন্ট পুশ
                     if (typeof fbq !== 'undefined') {
                         fbq('track', 'Purchase', {
                             content_name: this.selectedProduct.name,
@@ -551,12 +579,8 @@
                     }
 
                     try {
-                        // No-cors মোডে ব্যাকগ্রাউন্ড রিকোয়েস্ট সেন্ড করা
                         fetch(googleFormUrl, { method: "POST", mode: "no-cors", body: formData });
-                        
-                        alert(`ধন্যবাদ ${this.orderForm.name}! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। খুব শীঘ্রই আমাদের কাস্টমার রিপ্রেজেন্টেটিভ কল করে অর্ডারটি কনফার্ম করবেন।`);
-                        
-                        // ফর্ম ও স্টেট রিসেট করা
+                        alert(`ধন্যবাদ ${this.orderForm.name}! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে। খুব শীঘ্রই আমাদের প্রতিনিধি কল করে অর্ডারটি কনফার্ম করবেন।`);
                         this.orderForm = { name: '', phone: '', address: '' };
                         this.closeProductDetail();
                     } catch (err) {
@@ -564,7 +588,6 @@
                     }
                 },
 
-                // Authentication Engine Admin
                 verifyAdminPin() {
                     if (this.adminPin === '2026') {
                         this.adminAuthenticated = true;
@@ -579,16 +602,8 @@
                         alert("দয়া করে কালার নাম এবং ছবির লিংক দুটিই পূরণ করুন।");
                         return;
                     }
-                    
-                    // কমা সেপারেটেড লিংকগুলোকে অ্যারেতে রূপান্তর করা
                     let urlsArray = this.tempVariant.imageUrls.split(',').map(url => url.trim()).filter(url => url.length > 0);
-                    
-                    this.newProduct.colors.push({
-                        colorName: this.tempVariant.colorName,
-                        images: urlsArray
-                    });
-                    
-                    // টেম্পোরারি ইনপুট বক্স খালি করা
+                    this.newProduct.colors.push({ colorName: this.tempVariant.colorName, images: urlsArray });
                     this.tempVariant.colorName = '';
                     this.tempVariant.imageUrls = '';
                 },
@@ -598,17 +613,14 @@
                         alert("প্রোডাক্টের নাম, দাম এবং কমপক্ষে ১টি ভ্যারিয়েন্ট কালার যুক্ত করা আবশ্যক!");
                         return;
                     }
-
                     try {
                         let res = await fetch(this.firebaseUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(this.newProduct)
                         });
-                        
                         if (res.ok) {
-                            alert("অভিনন্দন! প্রোডাক্টটি সফলভাবে ক্লাউড ডাটাবেজে পাবলিশ হয়েছে এবং এখন লাইভ দেখা যাবে।");
-                            // ইনপুট ফর্ম রিসেট করা
+                            alert("অভিনন্দন! প্রোডাক্টটি সফলভাবে ক্লাউড ডাটাবেজে পাবলিশ হয়েছে।");
                             this.newProduct = { name: '', category: 'Saree', price: '', description: '', colors: [] };
                             await this.fetchProducts();
                         }
