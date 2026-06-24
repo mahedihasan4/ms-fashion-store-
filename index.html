@@ -6,6 +6,7 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
+    <!-- Facebook Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -20,6 +21,7 @@
     </script>
     <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=994704752965544&ev=PageView&noscript=1"/></noscript>
     
+    <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -49,10 +51,12 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased" x-data="storeApp()" x-init="initStore()">
 
+    <!-- Top Announcement Bar -->
     <div class="bg-brand-dark text-white text-center py-2 text-xs md:text-sm tracking-wide font-medium">
         ✨ ফ্রি Delivery অফার! ৩টি প্রোডাক্ট অর্ডারে সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি! ✨
     </div>
 
+    <!-- Main Navigation Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50 smooth-transition">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -75,6 +79,7 @@
             </div>
         </div>
         
+        <!-- Mobile Search -->
         <div class="md:hidden px-4 pb-3" x-show="currentView === 'user' && !selectedProduct">
             <div class="flex items-center bg-gray-100 border border-gray-200 rounded-lg px-3 py-2">
                 <input type="text" x-model="searchQuery" placeholder="পছন্দের পোশাকটি খুঁজুন..." class="bg-transparent w-full focus:outline-none text-sm">
@@ -83,6 +88,7 @@
         </div>
     </header>
 
+    <!-- Sidebar Filter Categories -->
     <div class="fixed inset-0 bg-black/50 z-50 smooth-transition" x-show="sidebarOpen" x-cloak @click.self="sidebarOpen = false">
         <div class="bg-white w-72 h-full p-6 shadow-2xl flex flex-col justify-between smooth-transition"
              x-show="sidebarOpen"
@@ -122,10 +128,13 @@
         </div>
     </div>
 
+    <!-- Main Content Dynamic Container -->
     <main class="container mx-auto px-4 py-6 max-w-7xl">
         
+        <!-- USER VIEW -->
         <div x-show="currentView === 'user'">
             
+            <!-- Deep Linking / Product Detail View -->
             <div x-show="selectedProduct" x-cloak class="mb-12">
                 <button @click="closeProductDetail()" class="mb-6 inline-flex items-center gap-2 bg-white border shadow-sm px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 hover:text-brand-deepPink hover:shadow transition-all">
                     <i class="fa-solid fa-arrow-left"></i> গ্যালারিতে ফিরে যান
@@ -133,6 +142,7 @@
                 
                 <template x-if="selectedProduct">
                     <div class="bg-white rounded-3xl p-4 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 border">
+                        <!-- Product Gallery Images -->
                         <div class="space-y-4">
                             <div class="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[3/4] border border-gray-100 shadow-inner">
                                 <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover">
@@ -146,6 +156,7 @@
                             </div>
                         </div>
                         
+                        <!-- Order & Variant Custom Matrix Panel -->
                         <div class="flex flex-col justify-between">
                             <div>
                                 <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase tracking-wider" x-text="selectedProduct.category === 'Saree' ? 'শাড়ি' : (selectedProduct.category === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></span>
@@ -156,6 +167,7 @@
                                 </div>
                                 <p class="text-gray-500 mt-4 text-sm leading-relaxed border-t pt-4" x-text="selectedProduct.description || 'প্রিমিয়াম কোয়ালিটির এই ট্র্যাডিশনাল পোশাকটি আপনার ফ্যাশনে যোগ করবে আভিজাত্যের নতুন মাত্রা।'"></p>
                                 
+                                <!-- Select Variant Controls Matrix -->
                                 <div class="mt-6">
                                     <h3 class="text-sm font-bold text-gray-900 mb-3">পছন্দের কালার ও পরিমাণ সিলেক্ট করুন (ছবির ওপর ক্লিক করলে সিলেক্ট/ডি-সিলেক্ট হবে):</h3>
                                     <div class="grid grid-cols-1 gap-3">
@@ -179,6 +191,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Form Area with Multi-Channel Payments & 6-Column Engine Setup -->
                             <div class="mt-8 border-t pt-6">
                                 <div class="bg-gradient-to-br from-gray-50 to-pink-50/20 p-5 rounded-2xl border border-pink-100">
                                     <h3 class="text-base font-bold text-gray-900 flex items-center gap-2 mb-4"><i class="fa-solid fa-truck-ramp-box text-brand-deepPink"></i> অর্ডারটি সম্পন্ন করতে আপনার তথ্য দিন</h3>
@@ -196,6 +209,7 @@
                                             <textarea x-model="orderForm.address" required rows="2" placeholder="গ্রাম/রোড, থানা, জেলা উল্লেখ করুন" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-pink focus:outline-none text-sm shadow-sm bg-white"></textarea>
                                         </div>
 
+                                        <!-- Delivery Area Selector -->
                                         <div>
                                             <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">ডেলিভারি এরিয়া সিলেক্ট করুন *</label>
                                             <div class="grid grid-cols-2 gap-2">
@@ -210,6 +224,7 @@
                                             </div>
                                         </div>
 
+                                        <!-- Payment Gateway -->
                                         <div class="pt-1">
                                             <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">পেমেন্ট পদ্ধতি সিলেক্ট করুন *</label>
                                             <div class="grid grid-cols-3 gap-2">
@@ -231,6 +246,7 @@
                                             </div>
                                         </div>
 
+                                        <!-- Mobile Banking Details Panel -->
                                         <div x-show="orderForm.paymentMethod === 'bKash' || orderForm.paymentMethod === 'Nagad'" x-cloak class="bg-white border border-dashed rounded-xl p-3 text-xs space-y-2">
                                             <p class="font-bold text-gray-800">👉 আমাদের <span x-text="orderForm.paymentMethod"></span> পার্সোনাল নাম্বার: <span class="text-brand-deepPink font-extrabold">01906109839</span></p>
                                             <div class="grid grid-cols-2 gap-2">
@@ -239,6 +255,7 @@
                                             </div>
                                         </div>
 
+                                        <!-- Bill Summary -->
                                         <div class="bg-white p-3 rounded-xl border text-xs space-y-1.5 shadow-sm">
                                             <div class="flex justify-between text-gray-600">
                                                 <span>পোশাকের মূল্য (<span x-text="getTotalQty()"></span> টি):</span>
@@ -254,6 +271,7 @@
                                             </div>
                                         </div>
                                         
+                                        <!-- Actions Selector Layout -->
                                         <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                                             <button type="submit" :disabled="getTotalQty() === 0" class="w-full bg-gradient-to-r from-brand-pink to-brand-deepPink hover:opacity-90 text-white font-extrabold text-sm py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transform active:scale-95 transition-all disabled:opacity-40 disabled:pointer-events-none">
                                                 <i class="fa-solid fa-circle-check"></i> 
@@ -272,6 +290,7 @@
                 </template>
             </div>
 
+            <!-- प्रিমিয়াম প্রফেশনাল ইমেজ স্লাইডার ব্যানার -->
             <div x-show="!selectedProduct" class="mb-10 relative rounded-3xl overflow-hidden shadow-lg aspect-[16/9] md:aspect-[21/9] bg-gray-200">
                 <template x-for="(slide, index) in bannerSlides" :key="index">
                     <div x-show="activeSlide === index" 
@@ -293,6 +312,7 @@
                 </div>
             </div>
 
+            <!-- Main Product Display Gallery Grid -->
             <div x-show="!selectedProduct">
                 <div class="flex items-center justify-between mb-6 border-b pb-4">
                     <h2 class="text-xl md:text-2xl font-black text-brand-dark" x-text="selectedCategory === 'All' ? 'আমাদের সম্পূর্ণ কালেকশন' : (selectedCategory === 'Saree' ? 'এক্সক্লুসিভ শাড়ি সমূহ' : 'প্রিমিয়াম থ্রি-পিস কালেকশন')"></h2>
@@ -322,6 +342,7 @@
                 </div>
             </div>
 
+            <!-- Customer Review Screenshot Section -->
             <div x-show="!selectedProduct" class="mt-16 border-t pt-10 mb-10">
                 <div class="text-center mb-8">
                     <span class="text-xs text-brand-deepPink bg-pink-50 font-bold px-3 py-1 rounded-full uppercase tracking-wider">Happy Customers</span>
@@ -334,7 +355,7 @@
                              x-transition:enter-start="opacity-0 transform translate-x-4"
                              x-transition:enter-end="opacity-100 transform translate-x-0"
                              class="absolute inset-0 w-full h-full p-2 flex items-center justify-center">
-                            <img :src="review.image" alt="Customer Review Screenshot" class="w-full h-full object-contain rounded-xl">
+                            <img :src="review.image" alt="Customer Review" class="w-full h-full object-contain rounded-xl">
                         </div>
                     </template>
                     <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 flex-wrap px-4">
@@ -346,12 +367,14 @@
             </div>
         </div>
 
+        <!-- ADMIN PANEL PORTAL VIEW -->
         <div x-show="currentView === 'admin'" x-cloak class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-black text-brand-dark"><i class="fa-solid fa-sliders text-brand-deepPink mr-2"></i>ড্যাশবোর্ড প্যানেল</h2>
                 <button @click="currentView = 'user'; selectedProduct = null;" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-arrow-left mr-1"></i> শপে ফিরে যান</button>
             </div>
 
+            <!-- Security Portal Auth -->
             <div x-show="!adminAuthenticated" class="bg-white border rounded-2xl p-6 shadow-sm max-w-md mx-auto text-center">
                 <i class="fa-solid fa-shield-cat text-4xl text-brand-pink mb-3"></i>
                 <h3 class="text-lg font-bold text-gray-900 mb-2">অনুমোদিত অ্যাক্সেস প্রয়োজন</h3>
@@ -360,6 +383,7 @@
                 <button @click="verifyAdminPin()" class="w-full bg-brand-dark text-white py-3 rounded-xl text-sm font-bold tracking-wide hover:bg-black transition-all">কনফার্ম করুন</button>
             </div>
 
+            <!-- Main Management Controls Panel Inputs -->
             <div x-show="adminAuthenticated">
                 <div class="bg-white border rounded-2xl p-6 shadow-sm mb-8">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-circle-plus text-green-500 mr-1"></i> নতুন প্রোডাক্ট যোগ করুন</h3>
@@ -380,7 +404,7 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">मूल्य (টাকা) *</label>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">মূল্য (টাকা) *</label>
                                 <input type="number" x-model="newProduct.price" placeholder="যেমন: 1450" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
                             </div>
                             <div>
@@ -389,6 +413,7 @@
                             </div>
                         </div>
 
+                        <!-- Variant Color Stack -->
                         <div class="border rounded-xl p-4 bg-gray-50/50">
                             <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">প্রোডাক্ট কালার ভ্যারিয়েন্ট এবং ইমেজ</h4>
                             <div class="space-y-3">
@@ -424,6 +449,7 @@
                     </div>
                 </div>
 
+                <!-- Product Live Database View Table Inventory -->
                 <div class="bg-white border rounded-2xl p-6 shadow-sm">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 border-b pb-2"><i class="fa-solid fa-boxes-stacked text-brand-pink mr-1"></i> লাইভ প্রোডাক্ট ইনভেন্টরি</h3>
                     <div class="overflow-x-auto">
@@ -463,15 +489,78 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t mt-20 py-6 text-center text-xs text-gray-500">
-        <div class="container mx-auto px-4 flex justify-between items-center max-w-7xl">
-            <div>&copy; 2026 MS Fashion Store. All Rights Reserved.</div>
-            <button @click="currentView = 'admin'; adminAuthenticated = false;" class="text-gray-300 hover:text-brand-pink transition-colors p-2">
-                <i class="fa-solid fa-user-gear text-sm"></i>
-            </button>
+    <!-- 🛠️ ১00% প্রফেশনাল লাক্সারি এবাউট এবং সোশ্যাল কন্টাক্ট ফুটার সেকশন (নতুন যোগ করা হয়েছে) -->
+    <footer x-show="currentView === 'user'" class="bg-white border-t-4 border-brand-pink mt-24 pt-12 pb-6">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-gray-100 text-sm">
+                
+                <!-- কলাম ১: আমাদের সম্পর্কে (About Us) -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-black text-brand-dark tracking-wider">
+                        <span class="text-brand-pink">MS</span> FASHION
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed text-xs md:text-sm">
+                        এমএস ফ্যাশন স্টোর বাংলাদেশের একটি নির্ভরযোগ্য প্রিমিয়াম অনলাইন লাইফস্টাইল ব্র্যান্ড। আমরা অত্যন্ত নিখুঁত ফিনিশিং এবং রাজকীয় কারুকার্যে তৈরি সেরা কোয়ালিটির এক্সক্লুসিভ শাড়ি ও বুটিক ডিজাইনার থ্রি-পিস ও টু-পিস কালেকশন কাস্টমারদের কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ। শতভাগ খাঁটি ফেব্রিক, দ্রুত গ্রাহক সেবা এবং বিশ্বস্ততাই আমাদের মূল চালিকাশক্তি।
+                    </p>
+                </div>
+
+                <!-- কলাম ২: দ্রুত যোগাযোগ ও সাপোর্ট (Quick Connect) -->
+                <div class="space-y-4">
+                    <h4 class="text-sm font-black text-brand-dark uppercase tracking-wider">সরাসরি যোগাযোগ করুন</h4>
+                    <ul class="space-y-3 text-xs md:text-sm font-medium text-gray-700">
+                        <li>
+                            <a href="https://wa.me/8801906109839" target="_blank" class="flex items-center gap-2.5 hover:text-green-600 smooth-transition">
+                                <i class="fa-brands fa-whatsapp text-green-500 text-lg"></i>
+                                <span>হটলাইন ও হোয়াটসঅ্যাপ: 01906109839</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:mh1755244@gmail.com" class="flex items-center gap-2.5 hover:text-brand-deepPink smooth-transition">
+                                <i class="fa-solid fa-envelope text-red-400 text-base"></i>
+                                <span>অফিসিয়াল ইমেইল: mh1755244@gmail.com</span>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="flex items-center gap-2.5 text-gray-600">
+                                <i class="fa-solid fa-location-dot text-brand-pink text-base"></i>
+                                <span>ঢাকা, বাংলাদেশ</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- কলাম ৩: সোশ্যাল পেজ ও পেমেন্ট সিকিউরিটি (Social & Secure Payments) -->
+                <div class="space-y-4">
+                    <h4 class="text-sm font-black text-brand-dark uppercase tracking-wider">আমাদের সোশ্যাল মিডিয়া</h4>
+                    <div class="flex items-center gap-3">
+                        <a href="https://www.facebook.com/share/1CdJXgLWJG/" target="_blank" class="w-10 h-10 rounded-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center text-lg shadow-sm border border-blue-100 smooth-transition">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="https://wa.me/8801906109839" target="_blank" class="w-10 h-10 rounded-full bg-green-50 hover:bg-green-600 text-green-600 hover:text-white flex items-center justify-center text-lg shadow-sm border border-green-100 smooth-transition">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <div class="pt-2">
+                        <p class="text-[11px] text-gray-400 uppercase font-bold tracking-wider">Secure Payment Options</p>
+                        <div class="flex items-center gap-3 mt-1.5 font-bold text-xs text-gray-500">
+                            <span class="px-2 py-1 border rounded-md bg-gray-50 text-pink-600 border-pink-100">বিকাশ পার্সোনাল</span>
+                            <span class="px-2 py-1 border rounded-md bg-gray-50 text-orange-600 border-orange-100">নগদ পার্সোনাল</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- কপিরাইট এবং গোপন এডমিন অ্যাক্সেস রও -->
+            <div class="pt-6 flex justify-between items-center text-xs text-gray-400 font-medium">
+                <div>&copy; 2026 MS Fashion Store. All Rights Reserved.</div>
+                <button @click="currentView = 'admin'; adminAuthenticated = false;" class="text-gray-200 hover:text-brand-pink transition-colors p-2">
+                    <i class="fa-solid fa-user-gear text-sm"></i>
+                </button>
+            </div>
         </div>
     </footer>
 
+    <!-- Global State Logics Control Script Core -->
     <script>
         function storeApp() {
             return {
@@ -485,7 +574,7 @@
                 entryDeliveryAddress: 'entry.330846905',    // কলাম ৩: Delivery Address
                 entryProductName: 'entry.1344458747',       // কলাম ৪: Product Name
                 entrySelectedVariants: 'entry.1874010356',  // কলাম ৫: Selected Variants
-                entryBillingDetails: 'entry.1235595492',    // কলাম６: Billing & Payment Details
+                entryBillingDetails: 'entry.1235595492',    // কলাম ৬: Billing & Payment Details
                 
                 // Banner Rotation Engine Slides
                 activeSlide: 0,
@@ -495,7 +584,7 @@
                     { image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1200&auto=format&fit=crop', title: 'নতুন শাড়ি লাঞ্চিং অফার', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
                 ],
                 
-                // 🛠️ আপনার পাঠানো ১৬টি আসল কাস্টমার রিভিউ স্ক্রিনশট লিংক সম্পূর্ণ যুক্ত করা হয়েছে
+                // কাস্টমার রিভিউ স্ক্রিনশট স্লাইডার লিংকসমূহ
                 activeReviewSlide: 0,
                 reviewSlides: [
                     { image: 'https://i.ibb.co.com/ns20hShb/FB-IMG-1782300856080.jpg' },
@@ -615,18 +704,15 @@
                     this.closeProductDetail();
                 },
 
-                // 🛠️ ছবিতে ১ম ক্লিকে ১টি সিলেক্ট এবং ২য় ক্লিকে ডি-সিলেক্ট (Toggle Logic) ফিক্স করা হয়েছে
                 handleRowToggleClick(colorName, idx) {
                     this.activeColorIndex = idx;
                     if (this.selectedProduct.colors && this.selectedProduct.colors[idx]) {
                         this.activeColorImage = this.selectedProduct.colors[idx].images[0];
                     }
                     
-                    // যদি আগে থেকেই সিলেক্ট করা থাকে (১ বা তার বেশি), তবে ক্লিক করলে এটি ০ (কাটা) হয়ে যাবে
                     if (this.selectedVariants[colorName] && this.selectedVariants[colorName] > 0) {
                         this.selectedVariants[colorName] = 0;
                     } else {
-                        // যদি আগে সিলেক্ট করা না থাকে, তবে ১ম ক্লিকে ১টি সিলেক্ট হবে
                         this.selectedVariants[colorName] = 1;
                     }
                 },
@@ -662,7 +748,6 @@
                     return this.calculateTotalProductPrice() + this.calculateDeliveryCharge();
                 },
 
-                // ৬টি কলামের প্রফেশনাল মাল্টিপল ইমেজ লিংক সাবমিশন ইঞ্জিন
                 async submitOrder() {
                     if (this.getTotalQty() === 0) return;
                     
