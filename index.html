@@ -120,7 +120,6 @@
                         <span>স্টাইলিশ টু পিস</span>
                         <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                     </button>
-                    <!-- 🛠️ ওয়ান পিস নতুন ক্যাটাগরি বাটন -->
                     <button @click="selectedCategory = 'One Piece'; sidebarOpen = false; selectedProduct = null;" :class="selectedCategory === 'One Piece' ? 'bg-brand-deepPink text-white' : 'hover:bg-gray-100 text-gray-700'" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex justify-between items-center transition-colors">
                         <span>এক্সক্লুসিভ ওয়ান পিস</span>
                         <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
@@ -170,7 +169,6 @@
                                     <span class="text-3xl font-black text-brand-deepPink">৳ <span x-text="selectedProduct.price"></span></span>
                                     <span class="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full font-medium"><i class="fa-solid fa-circle-check"></i> ইন স্টক (ডেলিভারি রেডি)</span>
                                 </div>
-                                <!-- 🛠️ ডেসক্রিপশন এরিয়া সুন্দর ও লাইন-ব্রেক ফ্রেন্ডলি করা হয়েছে (white-space: pre-line) -->
                                 <p class="text-gray-700 mt-4 text-sm leading-relaxed border-t pt-4 whitespace-pre-line" x-text="selectedProduct.description || 'প্রিমিয়াম কোয়ালিটির এই ট্র্যাডিশনাল পোশাকটি আপনার ফ্যাশনে যোগ করবে আভিজাত্যের নতুন মাত্রা।'"></p>
                                 
                                 <!-- Select Variant Controls Matrix -->
@@ -296,7 +294,7 @@
                 </template>
             </div>
 
-            <!-- 🛠️ প্রফেশনাল লাক্সারি ফ্যাশন ৪-ব্যানার স্লাইডার (শার্টের গ্যালারি সম্পূর্ণ বাদ দেওয়া হয়েছে) -->
+            <!-- 🛠️ ৫টি প্রফেশনাল ও ট্র্যাডিশনাল গ্যালারি ব্যানার স্লাইডার (১০০% পারফেক্ট শপ ইমেজ কনসেপ্ট) -->
             <div x-show="!selectedProduct" class="mb-10 relative rounded-3xl overflow-hidden shadow-lg aspect-[16/9] md:aspect-[21/9] bg-gray-200">
                 <template x-for="(slide, index) in bannerSlides" :key="index">
                     <div x-show="activeSlide === index" 
@@ -405,7 +403,6 @@
                                     <option value="Saree">Saree (শাড়ি)</option>
                                     <option value="Three Piece">Three Piece (থ্রি পিস)</option>
                                     <option value="Two Piece">Two Piece (টু পিস)</option>
-                                    <!-- 🛠️ অ্যাডমিন প্যানেলে ওয়ান পিস ক্যাটাগরি অপশন যোগ করা হয়েছে -->
                                     <option value="One Piece">One Piece (ওয়ান পিস)</option>
                                 </select>
                             </div>
@@ -416,8 +413,7 @@
                                 <input type="number" x-model="newProduct.price" placeholder="যেমন: 1450" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">ডেসক্রিপশন (লাইন ব্রেক দিয়ে গুছিয়ে লিখুন)</label>
-                                <!-- 🛠️ অ্যাডমিন ইনপুট বক্স বড় টেক্সট-এরিয়া করা হয়েছে লাইন ব্রেক ধরে রাখার জন্য -->
+                                <label class="block text-xs font-bold text-gray-600 mb-1">ডেসক্রিপশন (লাইন ব্রেক দিয়ে লিখুন)</label>
                                 <textarea x-model="newProduct.description" rows="3" placeholder="প্রোডাক্টের ডিটেইলস এখানে নিচে নিচে লিখুন..." class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink bg-white"></textarea>
                             </div>
                         </div>
@@ -486,7 +482,7 @@
                                             </div>
                                         </td>
                                         <td class="p-3 text-center">
-                                            <button @click="deleteProductFromCloud(id || prod.id)" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button>
+                                            <button @click="deleteProductFromCloud(prod.id)" class="text-red-500 hover:text-red-700 p-2 font-bold"><i class="fa-solid fa-trash-can"></i></button>
                                         </td>
                                     </tr>
                                 </template>
@@ -498,7 +494,7 @@
         </div>
     </main>
 
-    <!-- 🛠️ ১00% প্রফেশনাল লাক্সারি এবাউট এবং সোশ্যাল কন্টাক্ট ফুটার সেকশন -->
+    <!-- ১00% প্রফেশনাল লাক্সারি এবাউট এবং সোশ্যাল কন্টাক্ট ফুটার সেকশন -->
     <footer x-show="currentView === 'user'" class="bg-white border-t-4 border-brand-pink mt-24 pt-12 pb-6">
         <div class="container mx-auto px-4 max-w-7xl">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-gray-100 text-sm">
@@ -585,13 +581,14 @@
                 entrySelectedVariants: 'entry.1874010356',  // কলাম ৫: Selected Variants
                 entryBillingDetails: 'entry.1235595492',    // কলাম ৬: Billing & Payment Details
                 
-                // 🛠️ ৪টি ক্যাটাগরির জন্য ৪টি ডেডিকেটেড এক্সক্লুসিভ ফ্যাশন স্লাইড ব্যানার
+                // 🛠️ ৫টি ডেডিকেটেড এক্সক্লুসিভ ট্র্যাডিশনাল ফ্যাশন স্লাইড ব্যানার (শার্টের ছবি সম্পূর্ণ রিমুভড)
                 activeSlide: 0,
                 bannerSlides: [
                     { image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1200&auto=format&fit=crop', title: 'অভিজাত শাড়ি কালেকশন', subtitle: 'ঐতিহ্য আর সুনিপুণ কারুকার্যের লাক্সারি মডার্ন শাড়ি' },
                     { image: 'https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ থ্রি-পিস কালেকশন', subtitle: 'সবচেয়ে সেরা মেটেরিয়ালে তৈরি আরামদায়ক ও স্টাইলিশ পোশাক' },
                     { image: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=1200&auto=format&fit=crop', title: 'ট্রেন্ডি টু-পিস মেলা', subtitle: 'আধুনিক লাইফস্টাইলের সাথে মানানসই কালার কম্বিনেশন স্যুট' },
-                    { image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ ওয়ান পিস জোন', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
+                    { image: 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=1200&auto=format&fit=crop', title: 'প্রিমিয়াম ওয়ান পিস জোন', subtitle: 'লেটেস্ট ডিজাইনের ওয়ান পিস কালেকশন এক জায়গায়' },
+                    { image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop', title: 'MS Exclusive ধামাকা অফার', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
                 ],
                 
                 // কাস্টমার রিভিউ স্ক্রিনশট স্লাইডার লিংকসমূহ
@@ -654,7 +651,6 @@
                     }, 4500);
                 },
 
-                // 🛠️ ফায়ারবেস থেকে ডাটা আসার পর অটো-রিভার্স শর্টিং লজিক (নতুন প্রোডাক্ট সবার উপরে দেখাবে)
                 async fetchProducts() {
                     try {
                         let res = await fetch(this.firebaseUrl);
@@ -665,7 +661,6 @@
                                 if(data[key]) { loadedProducts.push({ id: key, ...data[key] }); }
                             });
                         }
-                        // 🛠️ রিয়েল-টাইম রিভার্স সর্টিং ট্রিগার করা হয়েছে
                         this.products = loadedProducts.reverse();
                     } catch (err) {
                         console.error("ডাটাবেজ লোড করতে ত্রুটি হয়েছে:", err);
@@ -860,7 +855,7 @@
                     message += `*প্রোডাক্ট:* ${this.selectedProduct.name}\n`;
                     message += `*ভ্যারিয়েন্ট:* ${variantDetailsText}\n\n`;
                     message += `*পোশাকের দাম:* ৳${productTotal}\n`;
-                    message += `*ডেলিভারি充 চার্জ:* ${deliveryCharge === 0 ? 'ফ্রি (অফার!)' : '৳' + deliveryCharge}\n`;
+                    message += `*ডেলিভারি চার্জ:* ${deliveryCharge === 0 ? 'ফ্রি (অফার!)' : '৳' + deliveryCharge}\n`;
                     message += `*সর্বমোট বিল:* ৳${grandTotal}\n\n`;
                     message += `*পেমেন্ট পদ্ধতি:* ${paymentInfoText}\n\n`;
                     message += `*সিলেক্টেড ইমেজের লিংকসমূহ:* ${selectedImagesArray.join('')}\n`;
