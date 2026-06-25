@@ -120,6 +120,11 @@
                         <span>স্টাইলিশ টু পিস</span>
                         <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                     </button>
+                    <!-- 🛠️ ওয়ান পিস নতুন ক্যাটাগরি বাটন -->
+                    <button @click="selectedCategory = 'One Piece'; sidebarOpen = false; selectedProduct = null;" :class="selectedCategory === 'One Piece' ? 'bg-brand-deepPink text-white' : 'hover:bg-gray-100 text-gray-700'" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex justify-between items-center transition-colors">
+                        <span>এক্সক্লুসিভ ওয়ান পিস</span>
+                        <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+                    </button>
                 </div>
             </div>
             <div class="border-t pt-4 text-center text-xs text-gray-400">
@@ -159,13 +164,14 @@
                         <!-- Order & Variant Custom Matrix Panel -->
                         <div class="flex flex-col justify-between">
                             <div>
-                                <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase tracking-wider" x-text="selectedProduct.category === 'Saree' ? 'শাড়ি' : (selectedProduct.category === 'Three Piece' ? 'থ্রি পিস' : 'টু পিস')"></span>
+                                <span class="text-xs bg-pink-100 text-brand-deepPink font-bold px-3 py-1 rounded-full uppercase tracking-wider" x-text="selectedProduct.category === 'Saree' ? 'শাড়ি' : (selectedProduct.category === 'Three Piece' ? 'থ্রি পিস' : (selectedProduct.category === 'Two Piece' ? 'টু পিস' : 'ওয়ান পিস'))"></span>
                                 <h1 class="text-2xl md:text-4xl font-extrabold text-brand-dark mt-3" x-text="selectedProduct.name"></h1>
                                 <div class="mt-4 flex items-center gap-4">
                                     <span class="text-3xl font-black text-brand-deepPink">৳ <span x-text="selectedProduct.price"></span></span>
                                     <span class="text-sm text-green-600 bg-green-50 px-3 py-1 rounded-full font-medium"><i class="fa-solid fa-circle-check"></i> ইন স্টক (ডেলিভারি রেডি)</span>
                                 </div>
-                                <p class="text-gray-500 mt-4 text-sm leading-relaxed border-t pt-4" x-text="selectedProduct.description || 'প্রিমিয়াম কোয়ালিটির এই ট্র্যাডিশনাল পোশাকটি আপনার ফ্যাশনে যোগ করবে আভিজাত্যের নতুন মাত্রা।'"></p>
+                                <!-- 🛠️ ডেসক্রিপশন এরিয়া সুন্দর ও লাইন-ব্রেক ফ্রেন্ডলি করা হয়েছে (white-space: pre-line) -->
+                                <p class="text-gray-700 mt-4 text-sm leading-relaxed border-t pt-4 whitespace-pre-line" x-text="selectedProduct.description || 'প্রিমিয়াম কোয়ালিটির এই ট্র্যাডিশনাল পোশাকটি আপনার ফ্যাশনে যোগ করবে আভিজাত্যের নতুন মাত্রা।'"></p>
                                 
                                 <!-- Select Variant Controls Matrix -->
                                 <div class="mt-6">
@@ -290,7 +296,7 @@
                 </template>
             </div>
 
-            <!-- प्रিমিয়াম প্রফেশনাল ইমেজ স্লাইডার ব্যানার -->
+            <!-- 🛠️ প্রফেশনাল লাক্সারি ফ্যাশন ৪-ব্যানার স্লাইডার (শার্টের গ্যালারি সম্পূর্ণ বাদ দেওয়া হয়েছে) -->
             <div x-show="!selectedProduct" class="mb-10 relative rounded-3xl overflow-hidden shadow-lg aspect-[16/9] md:aspect-[21/9] bg-gray-200">
                 <template x-for="(slide, index) in bannerSlides" :key="index">
                     <div x-show="activeSlide === index" 
@@ -315,7 +321,7 @@
             <!-- Main Product Display Gallery Grid -->
             <div x-show="!selectedProduct">
                 <div class="flex items-center justify-between mb-6 border-b pb-4">
-                    <h2 class="text-xl md:text-2xl font-black text-brand-dark" x-text="selectedCategory === 'All' ? 'আমাদের সম্পূর্ণ কালেকশন' : (selectedCategory === 'Saree' ? 'এক্সক্লুসিভ শাড়ি সমূহ' : 'প্রিমিয়াম থ্রি-পিস কালেকশন')"></h2>
+                    <h2 class="text-xl md:text-2xl font-black text-brand-dark" x-text="selectedCategory === 'All' ? 'আমাদের সম্পূর্ণ কালেকশন' : (selectedCategory === 'Saree' ? 'এক্সক্লুসিভ শাড়ি সমূহ' : (selectedCategory === 'Three Piece' ? 'প্রিমিয়াম থ্রি-পিস কালেকশন' : (selectedCategory === 'Two Piece' ? 'স্টাইলিশ টু-পিস কালেকশন' : 'ওয়ান পিস কালেকশন')))"></h2>
                     <span class="text-xs text-gray-400 font-bold bg-white border px-3 py-1.5 rounded-full" x-text="filteredProducts().length + ' টি পোশাক পাওয়া গেছে'"></span>
                 </div>
                 
@@ -325,7 +331,7 @@
                             <div class="relative overflow-hidden bg-gray-50 aspect-[3/4] border-b">
                                 <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : ''" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute bottom-2 left-2">
-                                    <span class="text-[10px] bg-white/90 backdrop-blur-sm text-brand-dark font-extrabold px-2 py-0.5 rounded shadow-sm border border-gray-100 uppercase" x-text="product.category === 'Saree' ? 'Saree' : '3-Piece'"></span>
+                                    <span class="text-[10px] bg-white/90 backdrop-blur-sm text-brand-dark font-extrabold px-2 py-0.5 rounded shadow-sm border border-gray-100 uppercase" x-text="product.category"></span>
                                 </div>
                             </div>
                             <div class="p-3 md:p-4 flex flex-col justify-between flex-grow">
@@ -399,6 +405,8 @@
                                     <option value="Saree">Saree (শাড়ি)</option>
                                     <option value="Three Piece">Three Piece (থ্রি পিস)</option>
                                     <option value="Two Piece">Two Piece (টু পিস)</option>
+                                    <!-- 🛠️ অ্যাডমিন প্যানেলে ওয়ান পিস ক্যাটাগরি অপশন যোগ করা হয়েছে -->
+                                    <option value="One Piece">One Piece (ওয়ান পিস)</option>
                                 </select>
                             </div>
                         </div>
@@ -408,8 +416,9 @@
                                 <input type="number" x-model="newProduct.price" placeholder="যেমন: 1450" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 mb-1">ডেসক্রিপশন</label>
-                                <input type="text" x-model="newProduct.description" placeholder="সংক্ষিপ্ত বিবরণী (ঐচ্ছিক)" class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink">
+                                <label class="block text-xs font-bold text-gray-600 mb-1">ডেসক্রিপশন (লাইন ব্রেক দিয়ে গুছিয়ে লিখুন)</label>
+                                <!-- 🛠️ অ্যাডমিন ইনপুট বক্স বড় টেক্সট-এরিয়া করা হয়েছে লাইন ব্রেক ধরে রাখার জন্য -->
+                                <textarea x-model="newProduct.description" rows="3" placeholder="প্রোডাক্টের ডিটেইলস এখানে নিচে নিচে লিখুন..." class="w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-pink bg-white"></textarea>
                             </div>
                         </div>
 
@@ -477,7 +486,7 @@
                                             </div>
                                         </td>
                                         <td class="p-3 text-center">
-                                            <button @click="deleteProductFromCloud(prod.id)" class="text-red-500 hover:text-red-700 p-2 font-bold"><i class="fa-solid fa-trash-can"></i></button>
+                                            <button @click="deleteProductFromCloud(id || prod.id)" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button>
                                         </td>
                                     </tr>
                                 </template>
@@ -489,7 +498,7 @@
         </div>
     </main>
 
-    <!-- 🛠️ ১00% প্রফেশনাল লাক্সারি এবাউট এবং সোশ্যাল কন্টাক্ট ফুটার সেকশন (নতুন যোগ করা হয়েছে) -->
+    <!-- 🛠️ ১00% প্রফেশনাল লাক্সারি এবাউট এবং সোশ্যাল কন্টাক্ট ফুটার সেকশন -->
     <footer x-show="currentView === 'user'" class="bg-white border-t-4 border-brand-pink mt-24 pt-12 pb-6">
         <div class="container mx-auto px-4 max-w-7xl">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10 border-b border-gray-100 text-sm">
@@ -529,7 +538,7 @@
                     </ul>
                 </div>
 
-                <!-- কলাম ৩: সোশ্যাল পেজ ও পেমেন্ট সিকিউরিটি (Social & Secure Payments) -->
+                <!-- কলাম ৩: সোশ্যাল পেজ ও পেমেন্ট সিকিউরিটি -->
                 <div class="space-y-4">
                     <h4 class="text-sm font-black text-brand-dark uppercase tracking-wider">আমাদের সোশ্যাল মিডিয়া</h4>
                     <div class="flex items-center gap-3">
@@ -565,7 +574,7 @@
         function storeApp() {
             return {
                 firebaseUrl: 'https://ms-fashion-store-1301a-default-rtdb.firebaseio.com/products.json',
-                whatsAppNumber: '8801906109839', // আপনার অফিসিয়াল হোয়াটসঅ্যাপ নাম্বার
+                whatsAppNumber: '8801906109839', // হোয়াটসঅ্যাপ নাম্বার
                 
                 // ১০০% ফিক্সড ৬টি কলামের প্রফেশনাল গুগল ফর্ম এন্ট্রি সেটিংস এবং রিয়েল অ্যাকশন ইউআরএল
                 googleFormActionUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfaPFnyb6wYItEH89Y9HHD1pSWLUCddcKLhg9jPaiUvfcuXLQ/formResponse',
@@ -576,12 +585,13 @@
                 entrySelectedVariants: 'entry.1874010356',  // কলাম ৫: Selected Variants
                 entryBillingDetails: 'entry.1235595492',    // কলাম ৬: Billing & Payment Details
                 
-                // Banner Rotation Engine Slides
+                // 🛠️ ৪টি ক্যাটাগরির জন্য ৪টি ডেডিকেটেড এক্সক্লুসিভ ফ্যাশন স্লাইড ব্যানার
                 activeSlide: 0,
                 bannerSlides: [
-                    { image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop', title: 'প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড', subtitle: 'ঐতিহ্য আর আধুনিকতার এক অনন্য কারুকাজ' },
-                    { image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ থ্রি পিস কালেকশন', subtitle: 'সবচেয়ে সেরা মেটেরিয়ালে তৈরি আরামদায়ক ও স্টাইলিশ পোশাক' },
-                    { image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1200&auto=format&fit=crop', title: 'নতুন শাড়ি লাঞ্চিং অফার', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
+                    { image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=1200&auto=format&fit=crop', title: 'অভিজাত শাড়ি কালেকশন', subtitle: 'ঐতিহ্য আর সুনিপুণ কারুকার্যের লাক্সারি মডার্ন শাড়ি' },
+                    { image: 'https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ থ্রি-পিস কালেকশন', subtitle: 'সবচেয়ে সেরা মেটেরিয়ালে তৈরি আরামদায়ক ও স্টাইলিশ পোশাক' },
+                    { image: 'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=80&w=1200&auto=format&fit=crop', title: 'ট্রেন্ডি টু-পিস মেলা', subtitle: 'আধুনিক লাইফস্টাইলের সাথে মানানসই কালার কম্বিনেশন স্যুট' },
+                    { image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1200&auto=format&fit=crop', title: 'এক্সক্লুসিভ ওয়ান পিস জোন', subtitle: '৩টি অর্ডারেই সারা বাংলাদেশে হোম ডেলিভারি সম্পূর্ণ ফ্রি!' }
                 ],
                 
                 // কাস্টমার রিভিউ স্ক্রিনশট স্লাইডার লিংকসমূহ
@@ -644,6 +654,7 @@
                     }, 4500);
                 },
 
+                // 🛠️ ফায়ারবেস থেকে ডাটা আসার পর অটো-রিভার্স শর্টিং লজিক (নতুন প্রোডাক্ট সবার উপরে দেখাবে)
                 async fetchProducts() {
                     try {
                         let res = await fetch(this.firebaseUrl);
@@ -654,7 +665,8 @@
                                 if(data[key]) { loadedProducts.push({ id: key, ...data[key] }); }
                             });
                         }
-                        this.products = loadedProducts;
+                        // 🛠️ রিয়েল-টাইম রিভার্স সর্টিং ট্রিগার করা হয়েছে
+                        this.products = loadedProducts.reverse();
                     } catch (err) {
                         console.error("ডাটাবেজ লোড করতে ত্রুটি হয়েছে:", err);
                     }
@@ -848,7 +860,7 @@
                     message += `*প্রোডাক্ট:* ${this.selectedProduct.name}\n`;
                     message += `*ভ্যারিয়েন্ট:* ${variantDetailsText}\n\n`;
                     message += `*পোশাকের দাম:* ৳${productTotal}\n`;
-                    message += `*ডেলিভারি চার্জ:* ${deliveryCharge === 0 ? 'ফ্রি (অফার!)' : '৳' + deliveryCharge}\n`;
+                    message += `*ডেলিভারি充 চার্জ:* ${deliveryCharge === 0 ? 'ফ্রি (অফার!)' : '৳' + deliveryCharge}\n`;
                     message += `*সর্বমোট বিল:* ৳${grandTotal}\n\n`;
                     message += `*পেমেন্ট পদ্ধতি:* ${paymentInfoText}\n\n`;
                     message += `*সিলেক্টেড ইমেজের লিংকসমূহ:* ${selectedImagesArray.join('')}\n`;
@@ -915,7 +927,7 @@
                                 await this.fetchProducts();
                             }
                         } catch (err) {
-                            alert("প্রোডাক্টটি ডিলিট করতে সমস্যা হয়েছে।");
+                            alert("দুঃখিত, প্রোডাক্টটি ডিলিট করতে সমস্যা হয়েছে।");
                         }
                     }
                 }
