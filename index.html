@@ -6,6 +6,11 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
+    <!-- Preconnect for Faster Loading & Pixel Tracking -->
+    <link rel="preconnect" href="https://ms-fashion-store-1301a-default-rtdb.firebaseio.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://connect.facebook.net">
+    
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -36,6 +41,7 @@
         .smooth-transition { transition: all 0.3s ease-in-out; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        html { scroll-behavior: smooth; }
         
         /* অত্যাধুনিক প্রিমিয়াম বাটন স্টাইল */
         .premium-category-btn {
@@ -122,7 +128,7 @@
                         <span>এক্সক্লুসিভ থ্রি পিস</span>
                         <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                     </button>
-                    <button @click="selectedCategory = 'Two Piece'; sidebarOpen = false; selectedProduct = null;" :class="selectedCategory === 'Two Piece' ? 'bg-brand-deepPink text-white' : 'hover:bg-gray-100 text-gray-700'" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex justify-between items-center transition-all duration-200 active:scale-98">
+                    <button @click="selectedCategory = 'Two Piece'; sidebarOpen = false; selectedProduct = null;" :class="selectedCategory === 'Two Piece' ? 'bg-brand-deepPink text-white shadow-md shadow-pink-500/20' : 'hover:bg-gray-100 text-gray-700'" class="w-full text-left px-4 py-3 rounded-xl font-medium text-sm flex justify-between items-center transition-all duration-200 active:scale-98">
                         <span>স্টাইলিশ টু পিস</span>
                         <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                     </button>
@@ -148,7 +154,7 @@
                          x-transition:enter-start="opacity-0 scale-105"
                          x-transition:enter-end="opacity-100 scale-100"
                          class="absolute inset-0 w-full h-full">
-                        <img :src="slide.image" alt="Shopping Banner" class="w-full h-full object-cover opacity-90">
+                        <img :src="slide.image" loading="lazy" decoding="async" alt="Shopping Banner" class="w-full h-full object-cover opacity-90">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                         <div class="absolute bottom-6 left-6 md:bottom-12 md:left-12 text-white max-w-xl z-10">
                             <span class="inline-block px-4 py-1.5 bg-brand-deepPink text-white text-[10px] md:text-xs font-black uppercase tracking-widest rounded-full mb-3 shadow-[0_4px_10px_rgba(255,20,147,0.4)]" x-text="slide.badge"></span>
@@ -195,12 +201,27 @@
                                     </div>
                                 </template>
                                 
-                                <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover">
+                                <!-- Video or Image Preview Setup -->
+                                <template x-if="activeColorVideo">
+                                    <video :src="activeColorVideo" autoplay loop muted playsinline class="w-full h-full object-cover"></video>
+                                </template>
+                                <template x-if="!activeColorVideo">
+                                    <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover">
+                                </template>
                             </div>
-                            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 1">
+                            
+                            <!-- Thumbnail Gallery -->
+                            <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 0">
                                 <template x-for="(img, idx) in selectedProduct.colors[activeColorIndex].images" :key="idx">
-                                    <button @click="activeColorImage = img" class="w-20 h-24 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 transition-all duration-200 transform active:scale-95" :class="activeColorImage === img ? 'border-brand-pink shadow-md' : 'border-transparent'">
-                                        <img :src="img" class="w-full h-full object-cover opacity-90 hover:opacity-100">
+                                    <button @click="activeColorImage = img; activeColorVideo = null;" class="w-20 h-24 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 transition-all duration-200 transform active:scale-95" :class="activeColorImage === img && !activeColorVideo ? 'border-brand-pink shadow-md' : 'border-transparent'">
+                                        <img :src="img" loading="lazy" class="w-full h-full object-cover opacity-90 hover:opacity-100">
+                                    </button>
+                                </template>
+                                <!-- Optional Video Thumbnail -->
+                                <template x-if="selectedProduct.colors[activeColorIndex].videoUrl">
+                                    <button @click="activeColorVideo = selectedProduct.colors[activeColorIndex].videoUrl" class="relative w-20 h-24 rounded-xl overflow-hidden border-2 bg-gray-900 flex-shrink-0 transition-all duration-200 transform active:scale-95" :class="activeColorVideo ? 'border-brand-pink shadow-md' : 'border-transparent'">
+                                        <div class="absolute inset-0 flex items-center justify-center text-white/80"><i class="fa-solid fa-play text-xl"></i></div>
+                                        <img :src="selectedProduct.colors[activeColorIndex].images[0]" loading="lazy" class="w-full h-full object-cover opacity-40">
                                     </button>
                                 </template>
                             </div>
@@ -226,7 +247,7 @@
                                         <template x-for="(col, index) in selectedProduct.colors" :key="index">
                                             <div @click="handleRowToggleClick(col.colorName, index)" class="flex items-center justify-between border rounded-xl p-4 bg-gray-50 transition-all duration-200 cursor-pointer hover:border-brand-pink hover:shadow-sm" :class="selectedVariants[col.colorName] > 0 ? 'border-brand-pink bg-pink-50/40 ring-1 ring-brand-pink/20 shadow-sm' : 'border-gray-200'">
                                                 <div class="flex items-center gap-4">
-                                                    <img :src="col.images[0]" class="w-16 h-20 object-cover rounded-xl border bg-white shadow-sm flex-shrink-0">
+                                                    <img :src="col.images[0]" loading="lazy" class="w-16 h-20 object-cover rounded-xl border bg-white shadow-sm flex-shrink-0">
                                                     <div>
                                                         <p class="font-black text-gray-900 text-sm md:text-base" x-text="col.colorName"></p>
                                                         <p class="text-xs font-medium mt-0.5" :class="selectedVariants[col.colorName] > 0 ? 'text-brand-deepPink' : 'text-gray-400'" x-text="selectedVariants[col.colorName] > 0 ? '✓ নির্বাচিত হয়েছে' : 'স্টকে আছে (ক্লিক করুন)'"></p>
@@ -348,10 +369,15 @@
                             </template>
 
                             <div class="relative overflow-hidden bg-gray-50 aspect-[3/4] border-b">
-                                <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : ''" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : ''" loading="lazy" decoding="async" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute bottom-2 left-2">
                                     <span class="text-[10px] bg-white/90 backdrop-blur-sm text-brand-dark font-extrabold px-2 py-0.5 rounded shadow-sm border border-gray-100 uppercase" x-text="product.category"></span>
                                 </div>
+                                <template x-if="product.colors && product.colors[0] && product.colors[0].videoUrl">
+                                    <div class="absolute top-2 right-2 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center shadow">
+                                        <i class="fa-solid fa-play text-[10px]"></i>
+                                    </div>
+                                </template>
                             </div>
                             <div class="p-3 md:p-4 flex flex-col justify-between flex-grow">
                                 <div>
@@ -384,7 +410,7 @@
                              x-transition:enter-start="opacity-0 transform translate-x-4"
                              x-transition:enter-end="opacity-100 transform translate-x-0"
                              class="absolute inset-0 w-full h-full p-2 flex items-center justify-center">
-                            <img :src="review.image" alt="Customer Review" class="w-full h-full object-contain rounded-xl">
+                            <img :src="review.image" loading="lazy" decoding="async" alt="Customer Review" class="w-full h-full object-contain rounded-xl">
                         </div>
                     </template>
                     <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 flex-wrap px-4">
@@ -453,16 +479,20 @@
                         </div>
 
                         <div class="border border-gray-200 rounded-xl p-4 bg-gray-50/50 shadow-inner">
-                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">প্রোডাক্ট কালার ভ্যারিয়েন্ট এবং ইমেজ</h4>
+                            <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">প্রোডাক্ট কালার ভ্যারিয়েন্ট এবং ইমেজ/ভিডিও</h4>
                             <div class="space-y-3">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-                                    <div class="md:col-span-1">
-                                        <label class="block text-[11px] font-bold text-gray-500 mb-1">কালার নাম</label>
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                                    <div class="md:col-span-3">
+                                        <label class="block text-[11px] font-bold text-gray-500 mb-1">কালার নাম *</label>
                                         <input type="text" x-model="tempVariant.colorName" placeholder="যেমন: মিষ্টি কালার" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-white shadow-sm">
                                     </div>
-                                    <div class="md:col-span-2">
-                                        <label class="block text-[11px] font-bold text-gray-500 mb-1">ইমেজের লিংক (কমা দিয়ে একাধিক লিংক)</label>
+                                    <div class="md:col-span-5">
+                                        <label class="block text-[11px] font-bold text-gray-500 mb-1">ইমেজের লিংক * (কমা দিয়ে একাধিক)</label>
                                         <input type="text" x-model="tempVariant.imageUrls" placeholder="https://img.com/1.jpg, https://img.com/2.jpg" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-xs focus:outline-none bg-white shadow-sm">
+                                    </div>
+                                    <div class="md:col-span-4">
+                                        <label class="block text-[11px] font-bold text-blue-500 mb-1">ভিডিও লিংক (ঐচ্ছিক)</label>
+                                        <input type="text" x-model="tempVariant.videoUrl" placeholder="MP4 ভিডিও লিংক (যদি থাকে)" class="w-full px-3 py-2 border border-blue-200 rounded-lg text-xs focus:outline-none bg-blue-50 shadow-sm">
                                     </div>
                                 </div>
                                 <button @click="addVariantToArray()" class="bg-gray-800 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-black transition-all duration-200 active:scale-95 shadow-sm">+ ভ্যারিয়েন্ট যুক্ত করুন</button>
@@ -471,7 +501,7 @@
                                 <div class="mt-4 flex flex-wrap gap-2">
                                     <template x-for="(col, idx) in newProduct.colors" :key="idx">
                                         <span class="bg-white border text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-sm border-gray-200 animate-fadeIn">
-                                            <span class="w-2 h-2 rounded-full bg-brand-pink"></span>
+                                            <span class="w-2 h-2 rounded-full" :class="col.videoUrl ? 'bg-blue-500' : 'bg-brand-pink'"></span>
                                             <span x-text="col.colorName + ' (' + col.images.length + ' টি ছবি)'"></span>
                                             <button @click="newProduct.colors.splice(idx, 1)" class="text-red-500 font-bold hover:text-red-700 ml-1">×</button>
                                         </span>
@@ -598,11 +628,13 @@
     </footer>
 
     <script>
+        // Database & Config Settings (Constants help obscure slightly from average users)
+        const DB_URL = atob('aHR0cHM6Ly9tcy1mYXNoaW9uLXN0b3JlLTEzMDFhLWRlZmF1bHQtcnRkYi5maXJlYmFzZWlvLmNvbS9wcm9kdWN0cy5qc29u');
+        const APP_ADMIN_HASH = 'MjAyNg=='; // Base64 for 2026 - Prevents direct plaintext reading
+
         function storeApp() {
             return {
-                firebaseUrl: 'https://ms-fashion-store-1301a-default-rtdb.firebaseio.com/products.json',
                 whatsAppNumber: '8801906109839',
-                
                 googleFormActionUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfaPFnyb6wYItEH89Y9HHD1pSWLUCddcKLhg9jPaiUvfcuXLQ/formResponse',
                 entryCustomerName: 'entry.972618658',
                 entryMobileNumber: 'entry.1163029175',
@@ -649,6 +681,7 @@
                 selectedProduct: null,
                 activeColorIndex: 0,
                 activeColorImage: '',
+                activeColorVideo: null, // New state for tracking video
                 selectedVariants: {},
                 
                 orderForm: { 
@@ -665,8 +698,9 @@
                 adminPin: '',
                 isEditing: false, 
                 editProductId: null,
+                // Model updated to support Optional Video
                 newProduct: { name: '', category: 'Saree', price: '', regularPrice: '', description: '', colors: [] },
-                tempVariant: { colorName: '', imageUrls: '' },
+                tempVariant: { colorName: '', imageUrls: '', videoUrl: '' },
 
                 async initStore() {
                     await this.fetchProducts();
@@ -683,7 +717,7 @@
 
                 async fetchProducts() {
                     try {
-                        let res = await fetch(this.firebaseUrl);
+                        let res = await fetch(DB_URL);
                         let data = await res.json();
                         let loadedProducts = [];
                         if(data) {
@@ -717,9 +751,17 @@
                 openProductDetail(product) {
                     this.selectedProduct = product;
                     this.activeColorIndex = 0;
-                    this.activeColorImage = product.colors && product.colors[0] ? product.colors[0].images[0] : '';
-                    this.selectedVariants = {};
                     
+                    // Prioritize Video if available on open
+                    if (product.colors && product.colors[0]) {
+                        this.activeColorVideo = product.colors[0].videoUrl || null;
+                        this.activeColorImage = product.colors[0].images[0] || '';
+                    } else {
+                        this.activeColorVideo = null;
+                        this.activeColorImage = '';
+                    }
+                    
+                    this.selectedVariants = {};
                     if (product.colors) {
                         product.colors.forEach(c => { this.selectedVariants[c.colorName] = 0; });
                     }
@@ -731,6 +773,7 @@
 
                 closeProductDetail() {
                     this.selectedProduct = null;
+                    this.activeColorVideo = null;
                     const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.pushState({ path: cleanUrl }, '', cleanUrl);
                 },
@@ -744,6 +787,7 @@
                 handleRowToggleClick(colorName, idx) {
                     this.activeColorIndex = idx;
                     if (this.selectedProduct.colors && this.selectedProduct.colors[idx]) {
+                        this.activeColorVideo = this.selectedProduct.colors[idx].videoUrl || null;
                         this.activeColorImage = this.selectedProduct.colors[idx].images[0];
                     }
                     
@@ -762,6 +806,7 @@
                     
                     this.activeColorIndex = idx;
                     if (this.selectedProduct.colors && this.selectedProduct.colors[idx]) {
+                        this.activeColorVideo = this.selectedProduct.colors[idx].videoUrl || null;
                         this.activeColorImage = this.selectedProduct.colors[idx].images[0];
                     }
                 },
@@ -902,7 +947,8 @@
                 },
 
                 verifyAdminPin() {
-                    if (this.adminPin === '2026') {
+                    // Base64 Check prevents simple searching of the exact numbers
+                    if (btoa(this.adminPin) === APP_ADMIN_HASH) {
                         this.adminAuthenticated = true;
                         this.adminPin = '';
                     } else {
@@ -912,13 +958,17 @@
 
                 addVariantToArray() {
                     if (!this.tempVariant.colorName || !this.tempVariant.imageUrls) {
-                        alert("দয়া করে কালার নাম এবং ছবির লিংক দুটিই পূরণ করুন।");
+                        alert("দয়া করে কালার নাম এবং ছবির লিংক দুটিই পূরণ করুন। (ভিডিও লিংক ঐচ্ছিক)");
                         return;
                     }
                     let urlsArray = this.tempVariant.imageUrls.split(',').map(url => url.trim()).filter(url => url.length > 0);
-                    this.newProduct.colors.push({ colorName: this.tempVariant.colorName, images: urlsArray });
+                    let videoUrlStr = this.tempVariant.videoUrl ? this.tempVariant.videoUrl.trim() : null;
+                    
+                    this.newProduct.colors.push({ colorName: this.tempVariant.colorName, images: urlsArray, videoUrl: videoUrlStr });
+                    
                     this.tempVariant.colorName = '';
                     this.tempVariant.imageUrls = '';
+                    this.tempVariant.videoUrl = '';
                 },
 
                 editProduct(prod) {
@@ -943,7 +993,7 @@
                     try {
                         let url = this.isEditing 
                             ? `https://ms-fashion-store-1301a-default-rtdb.firebaseio.com/products/${this.editProductId}.json` 
-                            : this.firebaseUrl;
+                            : DB_URL;
                         let method = this.isEditing ? 'PUT' : 'POST';
                         
                         let dataToSend = {...this.newProduct};
