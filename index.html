@@ -6,9 +6,6 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
-    <!-- ফায়ারবেস ডাটাবেজ ফাস্ট কানেক্ট করার জন্য -->
-    <link rel="preconnect" href="https://ms-fashion-store-1301a-default-rtdb.firebaseio.com">
-    
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -543,7 +540,7 @@
                         <span class="text-brand-pink">MS</span> FASHION
                     </h3>
                     <p class="text-gray-600 leading-relaxed text-xs md:text-sm">
-                        এমএস ফ্যাশন স্টোর বাংলাদেশের একটি নির্ভরযোগ্য প্রিমিয়াম অনলাইন লাইফস্টাইল ব্র্যান্ড। আমরা অত্যন্ত নিখুঁত ফিনিশিং এবং রাজকীয় কারুকার্যে তৈরি সেরা কোয়ালিটির এক্সক্লুসিভ শাড়ি ও বুটিক ডিজাইনার থ্রি-পিস ও টু-পিস কালেকশন কাস্টমারদের কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ। শতভাগ খাঁটি ফেব্রিক, দ্রুত গ্রাহক সেবা এবং বিশ্বস্ততাই আমাদের মূল চালিকাশক্তি।
+                        汇 এমএস ফ্যাশন স্টোর বাংলাদেশের একটি নির্ভরযোগ্য প্রিমিয়াম অনলাইন লাইফস্টাইল ব্র্যান্ড। আমরা অত্যন্ত নিখুঁত ফিনিশিং এবং রাজকীয় কারুকার্যে তৈরি সেরা কোয়ালিটির এক্সক্লুসিভ শাড়ি ও বুটিক ডিজাইনার থ্রি-পিস ও টু-পিস কালেকশন কাস্টমারদের কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ। শতভাগ খাঁটি ফেব্রিক, দ্রুত গ্রাহক সেবা এবং বিশ্বস্ততাই আমাদের মূল চালিকাশক্তি।
                     </p>
                 </div>
 
@@ -726,21 +723,6 @@
                     if (product.colors) {
                         product.colors.forEach(c => { this.selectedVariants[c.colorName] = 0; });
                     }
-                    
-                    // 🚀 SMART PRELOAD: শুধুমাত্র এই প্রোডাক্টটির কালার ছবিগুলো আগে থেকেই রেডি করবে!
-                    // কাস্টমার প্রোডাক্টের নাম পড়তে পড়তেই ব্যাকগ্রাউন্ডে ছবিগুলো মেমোরিতে সেভ হয়ে যাবে।
-                    setTimeout(() => {
-                        if (product.colors) {
-                            product.colors.forEach(c => {
-                                if (c.images) {
-                                    c.images.forEach(imgUrl => {
-                                        const img = new Image();
-                                        img.src = imgUrl; 
-                                    });
-                                }
-                            });
-                        }
-                    }, 100);
                     
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + product.id;
                     window.history.pushState({ path: newUrl }, '', newUrl);
