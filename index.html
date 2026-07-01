@@ -6,6 +6,9 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
+    <!-- ফায়ারবেস ডাটাবেজ ফাস্ট কানেক্ট করার জন্য -->
+    <link rel="preconnect" href="https://ms-fashion-store-1301a-default-rtdb.firebaseio.com">
+    
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -692,31 +695,9 @@
                             });
                         }
                         this.products = loadedProducts.reverse();
-
-                        // 🚀 স্পিড ফিক্স: ডাটাবেজ লোড হওয়ার পর ব্যাকগ্রাউন্ডে কালারের ছবিগুলো প্রি-লোড করে রাখা হচ্ছে
-                        this.preloadVariantImages();
-
                     } catch (err) {
                         console.error("ডাটাবেজ লোড করতে ত্রুটি হয়েছে:", err);
                     }
-                },
-
-                // 🚀 নতুন স্পিড আপ ফাংশন: ছবিগুলো ক্লিক করার আগেই রেডি করে রাখবে
-                preloadVariantImages() {
-                    setTimeout(() => {
-                        this.products.forEach(p => {
-                            if (p.colors) {
-                                p.colors.forEach(c => {
-                                    if (c.images) {
-                                        c.images.forEach(imgUrl => {
-                                            const img = new Image();
-                                            img.src = imgUrl; // ব্রাউজার মেমোরিতে সেভ করে রাখবে
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }, 1000); // সাইট ওপেন হওয়ার ১ সেকেন্ড পর কাজ শুরু করবে যাতে মেইন সাইট স্লো না হয়
                 },
 
                 checkDeepLinking() {
@@ -745,6 +726,21 @@
                     if (product.colors) {
                         product.colors.forEach(c => { this.selectedVariants[c.colorName] = 0; });
                     }
+                    
+                    // 🚀 SMART PRELOAD: শুধুমাত্র এই প্রোডাক্টটির কালার ছবিগুলো আগে থেকেই রেডি করবে!
+                    // কাস্টমার প্রোডাক্টের নাম পড়তে পড়তেই ব্যাকগ্রাউন্ডে ছবিগুলো মেমোরিতে সেভ হয়ে যাবে।
+                    setTimeout(() => {
+                        if (product.colors) {
+                            product.colors.forEach(c => {
+                                if (c.images) {
+                                    c.images.forEach(imgUrl => {
+                                        const img = new Image();
+                                        img.src = imgUrl; 
+                                    });
+                                }
+                            });
+                        }
+                    }, 100);
                     
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?product=' + product.id;
                     window.history.pushState({ path: newUrl }, '', newUrl);
