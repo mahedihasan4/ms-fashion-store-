@@ -6,11 +6,31 @@
     <title>MS Fashion Store | প্রিমিয়াম লাইফস্টাইল ব্র্যান্ড</title>
     <meta name="description" content="MS Fashion Store - এখানে পাবেন প্রিমিয়াম কোয়ালিটির শাড়ি, থ্রি-পিস এবং টু-পিস কালেকশন।">
     
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://ms-fashion-store-1301a-default-rtdb.firebaseio.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://i.ibb.co.com">
+
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-KTX64K7G');</script>
+    
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    // Note: If you have a specific Pixel ID, you can initialize it here: fbq('init', 'YOUR_PIXEL_ID');
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,7 +49,7 @@
         }
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     
     <style>
         [x-cloak] { display: none !important; }
@@ -61,6 +81,7 @@
     
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTX64K7G"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
     <div class="bg-brand-dark text-white text-center py-2 text-xs md:text-sm tracking-wide font-medium">
         ✨ ফ্রি Delivery অফার! ৩টি প্রোডাক্ট অর্ডারে সারা বাংলাদেশে হোম ডেলিভারি একদম ফ্রি! ✨
     </div>
@@ -148,7 +169,7 @@
                          x-transition:enter-start="opacity-0 scale-105"
                          x-transition:enter-end="opacity-100 scale-100"
                          class="absolute inset-0 w-full h-full">
-                        <img :src="slide.image" alt="Shopping Banner" class="w-full h-full object-cover opacity-90">
+                        <img :src="slide.image" alt="Shopping Banner" class="w-full h-full object-cover opacity-90" decoding="async">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
                         <div class="absolute bottom-6 left-6 md:bottom-12 md:left-12 text-white max-w-xl z-10">
                             <span class="inline-block px-4 py-1.5 bg-brand-deepPink text-white text-[10px] md:text-xs font-black uppercase tracking-widest rounded-full mb-3 shadow-[0_4px_10px_rgba(255,20,147,0.4)]" x-text="slide.badge"></span>
@@ -195,12 +216,12 @@
                                     </div>
                                 </template>
                                 
-                                <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover">
+                                <img :src="activeColorImage ? activeColorImage : (selectedProduct.colors && selectedProduct.colors[0] ? selectedProduct.colors[0].images[0] : '')" :alt="selectedProduct.name" class="w-full h-full object-cover" decoding="async">
                             </div>
                             <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar" x-show="selectedProduct.colors && selectedProduct.colors[activeColorIndex] && selectedProduct.colors[activeColorIndex].images.length > 1">
                                 <template x-for="(img, idx) in selectedProduct.colors[activeColorIndex].images" :key="idx">
                                     <button @click="activeColorImage = img" class="w-20 h-24 rounded-xl overflow-hidden border-2 bg-gray-50 flex-shrink-0 transition-all duration-200 transform active:scale-95" :class="activeColorImage === img ? 'border-brand-pink shadow-md' : 'border-transparent'">
-                                        <img :src="img" class="w-full h-full object-cover opacity-90 hover:opacity-100">
+                                        <img :src="img" loading="lazy" decoding="async" class="w-full h-full object-cover opacity-90 hover:opacity-100">
                                     </button>
                                 </template>
                             </div>
@@ -226,7 +247,7 @@
                                         <template x-for="(col, index) in selectedProduct.colors" :key="index">
                                             <div @click="handleRowToggleClick(col.colorName, index)" class="flex items-center justify-between border rounded-xl p-4 bg-gray-50 transition-all duration-200 cursor-pointer hover:border-brand-pink hover:shadow-sm" :class="selectedVariants[col.colorName] > 0 ? 'border-brand-pink bg-pink-50/40 ring-1 ring-brand-pink/20 shadow-sm' : 'border-gray-200'">
                                                 <div class="flex items-center gap-4">
-                                                    <img :src="col.images[0]" class="w-16 h-20 object-cover rounded-xl border bg-white shadow-sm flex-shrink-0">
+                                                    <img :src="col.images[0]" loading="lazy" decoding="async" class="w-16 h-20 object-cover rounded-xl border bg-white shadow-sm flex-shrink-0">
                                                     <div>
                                                         <p class="font-black text-gray-900 text-sm md:text-base" x-text="col.colorName"></p>
                                                         <p class="text-xs font-medium mt-0.5" :class="selectedVariants[col.colorName] > 0 ? 'text-brand-deepPink' : 'text-gray-400'" x-text="selectedVariants[col.colorName] > 0 ? '✓ নির্বাচিত হয়েছে' : 'স্টকে আছে (ক্লিক করুন)'"></p>
@@ -348,7 +369,7 @@
                             </template>
 
                             <div class="relative overflow-hidden bg-gray-50 aspect-[3/4] border-b">
-                                <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : ''" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <img :src="product.colors && product.colors[0] ? product.colors[0].images[0] : ''" loading="lazy" decoding="async" :alt="product.name" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute bottom-2 left-2">
                                     <span class="text-[10px] bg-white/90 backdrop-blur-sm text-brand-dark font-extrabold px-2 py-0.5 rounded shadow-sm border border-gray-100 uppercase" x-text="product.category"></span>
                                 </div>
@@ -384,7 +405,7 @@
                              x-transition:enter-start="opacity-0 transform translate-x-4"
                              x-transition:enter-end="opacity-100 transform translate-x-0"
                              class="absolute inset-0 w-full h-full p-2 flex items-center justify-center">
-                            <img :src="review.image" alt="Customer Review" class="w-full h-full object-contain rounded-xl">
+                            <img :src="review.image" loading="lazy" decoding="async" alt="Customer Review" class="w-full h-full object-contain rounded-xl">
                         </div>
                     </template>
                     <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 flex-wrap px-4">
@@ -540,7 +561,7 @@
                         <span class="text-brand-pink">MS</span> FASHION
                     </h3>
                     <p class="text-gray-600 leading-relaxed text-xs md:text-sm">
-                        汇 এমএস ফ্যাশন স্টোর বাংলাদেশের একটি নির্ভরযোগ্য প্রিমিয়াম অনলাইন লাইফস্টাইল ব্র্যান্ড। আমরা অত্যন্ত নিখুঁত ফিনিশিং এবং রাজকীয় কারুকার্যে তৈরি সেরা কোয়ালিটির এক্সক্লুসিভ শাড়ি ও বুটিক ডিজাইনার থ্রি-পিস ও টু-পিস কালেকশন কাস্টমারদের কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ। শতভাগ খাঁটি ফেব্রিক, দ্রুত গ্রাহক সেবা এবং বিশ্বস্ততাই আমাদের মূল চালিকাশক্তি।
+                        এমএস ফ্যাশন স্টোর বাংলাদেশের একটি নির্ভরযোগ্য প্রিমিয়াম অনলাইন লাইফস্টাইল ব্র্যান্ড। আমরা অত্যন্ত নিখুঁত ফিনিশিং এবং রাজকীয় কারুকার্যে তৈরি সেরা কোয়ালিটির এক্সক্লুসিভ শাড়ি ও বুটিক ডিজাইনার থ্রি-পিস ও টু-পিস কালেকশন কাস্টমারদের কাছে পৌঁছে দিতে প্রতিশ্রুতিবদ্ধ।
                     </p>
                 </div>
 
@@ -683,6 +704,13 @@
 
                 async fetchProducts() {
                     try {
+                        // 🚀 Cache Data for Instant Load (Fast performance)
+                        const cachedProducts = localStorage.getItem('ms_products_cache');
+                        if (cachedProducts) {
+                            this.products = JSON.parse(cachedProducts);
+                        }
+                        
+                        // Fetch new data in background
                         let res = await fetch(this.firebaseUrl);
                         let data = await res.json();
                         let loadedProducts = [];
@@ -692,6 +720,9 @@
                             });
                         }
                         this.products = loadedProducts.reverse();
+                        
+                        // Update Cache
+                        localStorage.setItem('ms_products_cache', JSON.stringify(this.products));
                     } catch (err) {
                         console.error("ডাটাবেজ লোড করতে ত্রুটি হয়েছে:", err);
                     }
@@ -701,8 +732,11 @@
                     const urlParams = new URLSearchParams(window.location.search);
                     const prodId = urlParams.get('product');
                     if (prodId) {
-                        const foundProduct = this.products.find(p => p.id === prodId);
-                        if (foundProduct) { this.openProductDetail(foundProduct); }
+                        // Small delay to ensure data is populated
+                        setTimeout(() => {
+                            const foundProduct = this.products.find(p => p.id === prodId);
+                            if (foundProduct) { this.openProductDetail(foundProduct); }
+                        }, 100);
                     }
                 },
 
@@ -829,8 +863,9 @@
                     formData.append(this.entrySelectedVariants, fieldVariants); 
                     formData.append(this.entryBillingDetails, fieldBilling); 
 
-                    if (typeof fbq !== 'undefined') {
-                        fbq('track', 'Purchase', {
+                    // 🚀 Robust FB Pixel Firing
+                    if (typeof window.fbq === 'function') {
+                        window.fbq('track', 'Purchase', {
                             content_name: this.selectedProduct.name,
                             content_category: this.selectedProduct.category,
                             value: grandTotal,
@@ -958,6 +993,8 @@
                         if (res.ok) {
                             alert(this.isEditing ? "অভিনন্দন! প্রোডাক্টটি সফলভাবে আপডেট হয়েছে।" : "অভিনন্দন! প্রোডাক্টটি সফলভাবে ক্লাউড ডাটাবেজে পাবলিশ হয়েছে।");
                             this.cancelEdit();
+                            // Clear cache on update so new changes reflect immediately
+                            localStorage.removeItem('ms_products_cache');
                             await this.fetchProducts();
                         }
                     } catch (err) {
@@ -972,6 +1009,8 @@
                             let res = await fetch(deleteUrl, { method: 'DELETE' });
                             if (res.ok) {
                                 alert("প্রোডাক্টটি সফলভাবে ডাটাবেজ থেকে মুছে ফেলা হয়েছে।");
+                                // Clear cache on delete
+                                localStorage.removeItem('ms_products_cache');
                                 await this.fetchProducts();
                             }
                         } catch (err) {
